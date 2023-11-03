@@ -1,25 +1,37 @@
 package com.FMCSULconferencehandler.model;
 
+import com.FMCSULconferencehandler.ParticipantRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
+import java.util.List;
 
 @Service
 public class UserService {
-    private LinkedList<User> users=new LinkedList<>();
+    @Autowired
+    private ParticipantRepository participantRepository;
+    private List<Participant> users=new LinkedList<>();
+    public UserService(ParticipantRepository participantRepository)
+    {
+        this.participantRepository=participantRepository;
+        users.addAll(participantRepository.findAll());
 
-    public void add(User user)
+    }
+
+    public void add(Participant user)
     {
         users.add(user);
+        participantRepository.save(user);
     }
-    public User getUserByEmail(String email)
+    public Participant getUserByEmail(String email)
     {
-        for(User user:users)
+        for(Participant user:users)
         {
-            if(user.getName().equals(email))
-            {
+            if (user.getEmail_login().equals(email)) {
                 return user;
             }
+
         }
         return null;
     }

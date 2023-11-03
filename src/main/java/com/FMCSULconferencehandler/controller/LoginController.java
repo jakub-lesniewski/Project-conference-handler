@@ -1,25 +1,24 @@
 package com.FMCSULconferencehandler.controller;
 
-import com.FMCSULconferencehandler.model.User;
+import com.FMCSULconferencehandler.model.Participant;
 import com.FMCSULconferencehandler.model.UserService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class LoginController {
+    private UserService userService;
     public LoginController(UserService userService) {
         this.userService = userService;
-        userService.add(new User("XD","XD","XD","XD","MOJEHASLO",0));
+        //userService.add(new Participant("XD","XD","XD","XD","MOJEHASLO",0));
     }
 
     //@Autowired
-    private UserService userService;
 
-    @PostMapping ("/login")
-    public User login(User reqUser) {
-        User user=userService.getUserByEmail(reqUser.getEmail_login());
+
+    @PostMapping("/login")
+    public Participant login(Participant reqUser) {
+        Participant user=userService.getUserByEmail(reqUser.getEmail_login());
         if(user!=null && reqUser.getPassword().equals(user.getPassword()))
         {
             return user;
@@ -31,10 +30,13 @@ public class LoginController {
     }
 
     @PostMapping("/addUser")
-    public ResponseEntity<String>  addUser(@RequestBody User reqUser)
+    public boolean  addUser(Participant reqUser)
     {
-        userService.add(reqUser);
-        return ResponseEntity.ok("user added");
+        if(reqUser.getName()!=null && reqUser.getSurname()!=null && reqUser.getEmail_login()!=null && reqUser.getAffilation()!=null) {
+            userService.add(reqUser);
+            return  true;
+        }
+        return false;
     }
 
 

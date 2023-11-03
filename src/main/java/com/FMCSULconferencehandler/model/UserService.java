@@ -7,6 +7,7 @@ import java.util.LinkedList;
 @Service
 public class UserService {
     private LinkedList<User> users=new LinkedList<>();
+
     public void add(User user)
     {
         users.add(user);
@@ -15,7 +16,7 @@ public class UserService {
     {
         for(User user:users)
         {
-            if(user.getEmail_login().equals(email))
+            if(user.getName().equals(email))
             {
                 return user;
             }
@@ -23,3 +24,5 @@ public class UserService {
         return null;
     }
 }
+//DO DOCUMENTATION
+//JSON DO TABLICY

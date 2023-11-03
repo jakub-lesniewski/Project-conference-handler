@@ -7,6 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class FmcsUlConferenceHandlerApplication {
 
 	public static void main(String[] args) {
+
+
 		SpringApplication.run(FmcsUlConferenceHandlerApplication.class, args);
 	}
 

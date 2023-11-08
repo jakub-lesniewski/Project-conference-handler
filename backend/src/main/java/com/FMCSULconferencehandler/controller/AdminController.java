@@ -4,10 +4,7 @@ import com.FMCSULconferencehandler.AdminRepository;
 import com.FMCSULconferencehandler.model.Admin;
 import com.FMCSULconferencehandler.model.Participant;
 import com.FMCSULconferencehandler.model.UserService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Random;
@@ -32,7 +29,7 @@ public class AdminController {
 
 
     @PostMapping("/login")
-    public Admin  adminLogin(Admin reqAdmin)
+    public Admin  adminLogin(@RequestBody Admin reqAdmin)
     {
 
         Admin admin=adminRepository.findAll().get(0);
@@ -44,7 +41,7 @@ public class AdminController {
     }
 
     @PostMapping("/addUser")
-    public boolean  addUser(Participant reqUser)
+    public boolean  addUser( @RequestBody Participant reqUser)
     {
         if(reqUser.getName()!=null && reqUser.getSurname()!=null && reqUser.getEmail_login()!=null && reqUser.getAffilation()!=null) {
             reqUser.setPassword(passwordGenerate());

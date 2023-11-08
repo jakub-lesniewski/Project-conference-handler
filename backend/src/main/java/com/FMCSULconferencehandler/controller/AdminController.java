@@ -29,7 +29,7 @@ public class AdminController {
 
 
     @PostMapping("/login")
-    public Admin  adminLogin(@RequestBody Admin reqAdmin)
+    public Object  adminLogin(@RequestBody Admin reqAdmin)
     {
 
         Admin admin=adminRepository.findAll().get(0);
@@ -37,18 +37,25 @@ public class AdminController {
         {
             return admin;
         }
-        return null;
+        return "INVALID DATA";
     }
 
     @PostMapping("/addUser")
-    public boolean  addUser( @RequestBody Participant reqUser)
+    public String  addUser( @RequestBody Participant... reqUsers)
     {
-        if(reqUser.getName()!=null && reqUser.getSurname()!=null && reqUser.getEmail_login()!=null && reqUser.getAffilation()!=null) {
-            reqUser.setPassword(passwordGenerate());
-            userService.add(reqUser);
-            return  true;
+        int x=0;
+        for(Participant reqUser:reqUsers) {
+            if (reqUser.getName() != null && reqUser.getSurname() != null && reqUser.getEmail_login() != null && reqUser.getAffilation() != null) {
+                reqUser.setPassword(passwordGenerate());
+                x++;
+            }
+            else
+            {
+                return "Error";
+            }
         }
-        return false;
+        userService.add(reqUsers);
+        return "Added "+x+" participants";
     }
     private String passwordGenerate()
     {

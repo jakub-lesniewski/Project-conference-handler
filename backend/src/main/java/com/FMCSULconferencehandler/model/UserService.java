@@ -19,10 +19,14 @@ public class UserService {
 
     }
 
-    public void add(Participant user)
+    public void add(Participant... usersList)
     {
-        users.add(user);
-        participantRepository.save(user);
+        for(Participant user:usersList)
+        {
+            users.add(user);
+            participantRepository.save(user);
+        }
+
     }
     public Participant getUserByEmail(String email)
     {

@@ -10,10 +10,11 @@ public class LoginController {
     private UserService userService;
     public LoginController(UserService userService) {
         this.userService = userService;
-        //userService.add(new Participant("XD","XD","XD","XD","MOJEHASLO",0));
+
     }
 
-    //@Autowired
+
+
 
 
     @PostMapping("/login")
@@ -28,17 +29,5 @@ public class LoginController {
             return null;
         }
     }
-
-    @PostMapping("/addUser")
-    public boolean  addUser(Participant reqUser)
-    {
-        if(reqUser.getName()!=null && reqUser.getSurname()!=null && reqUser.getEmail_login()!=null && reqUser.getAffilation()!=null) {
-            userService.add(reqUser);
-            return  true;
-        }
-        return false;
-    }
-
-
 
 }

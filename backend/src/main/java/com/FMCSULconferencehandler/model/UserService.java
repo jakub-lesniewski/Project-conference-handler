@@ -35,6 +35,11 @@ public class UserService {
         }
         return null;
     }
+
+    public  List<Participant> getParticipants()
+    {
+        return users;
+    }
 }
 //DO DOCUMENTATION
 //JSON DO TABLICY

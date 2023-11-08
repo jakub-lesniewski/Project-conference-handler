@@ -4,10 +4,12 @@ import com.FMCSULconferencehandler.AdminRepository;
 import com.FMCSULconferencehandler.model.Admin;
 import com.FMCSULconferencehandler.model.Participant;
 import com.FMCSULconferencehandler.model.UserService;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Random;
 
 @RestController
@@ -19,6 +21,13 @@ public class AdminController {
     {
         this.userService=userService;
         this.adminRepository=adminRepository;
+    }
+
+
+    @GetMapping("/participants")
+    public List<Participant> getParticipants()
+    {
+        return userService.getParticipants();
     }
 
     @PostMapping("/login")

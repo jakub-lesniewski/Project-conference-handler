@@ -23,6 +23,7 @@ public class Participant {
 
 
 
+
     public Participant( String name, String surname, String email_login, String affilation, String password) {
 
         this.name = name;

@@ -5,7 +5,7 @@ import "./index.css";
 
 import LandingLayout from "./ui/LandingLayout";
 import ErrorPage from "./ui/ErrorPage";
-import Login from "./features/login/Login";
+import Login, { action as loginAction } from "./features/login/Login";
 import User from "./features/user/User";
 import Backoffice from "./features/backoffice/Backoffice";
 import UserLayout from "./features/user/UserLayout";
@@ -15,7 +15,8 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <LandingLayout />,
-    children: [{ path: "/", element: <Login /> }],
+    children: [{ path: "/", element: <Login />, action: loginAction }],
+
     errorElement: <ErrorPage />,
   },
 

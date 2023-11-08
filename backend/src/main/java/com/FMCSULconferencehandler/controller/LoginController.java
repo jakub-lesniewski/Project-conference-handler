@@ -14,15 +14,19 @@ public class LoginController {
 
     }
     @PostMapping("/login")
-    public Participant login(@RequestBody Participant reqUser) {
+    public Object login(@RequestBody Participant reqUser) {
         Participant user=userService.getUserByEmail(reqUser.getEmail_login());
-        if(user!=null && reqUser.getPassword().equals(user.getPassword()))
+        if(user==null)
+        {
+            return "USER NOT FOUND";
+        }
+        else if( reqUser.getPassword().equals(user.getPassword()))
         {
             return user;
         }
         else
         {
-            return null;
+            return "INVALID PASSWORD";
         }
     }
 

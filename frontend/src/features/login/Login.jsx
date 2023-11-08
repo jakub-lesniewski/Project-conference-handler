@@ -5,7 +5,14 @@ import Button from "../../ui/Button";
 import axios from "axios";
 
 function Login() {
-  const navigate = useNavigate();
+  const [loginData, setLoginData] = useState({});
+  const navigate = useNavigate({
+    id: null,
+    name: null,
+    surname: null,
+    email_login: null,
+    affiliation: null,
+  });
 
   return (
     <div className="flex flex-col items-center gap-5">
@@ -46,8 +53,8 @@ export async function action({ request }) {
   };
 
   const response = await axios.request(config);
-
-  console.log(JSON.stringify(response.data, null, 2));
+  const responseData = response.data;
+  console.log(responseData);
 
   return null;
 }

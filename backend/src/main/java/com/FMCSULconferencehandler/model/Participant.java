@@ -1,7 +1,9 @@
 package com.FMCSULconferencehandler.model;
 
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import lombok.NoArgsConstructor;
 
 import java.util.UUID;
@@ -12,6 +14,8 @@ import java.util.UUID;
 @Entity(name="participant")
 @NoArgsConstructor
 public class Participant {
+
+
     @Id
     @GeneratedValue
     private UUID id;
@@ -32,7 +36,9 @@ public class Participant {
         this.affilation = affilation;
         this.password = password;
     }
-
+    public UUID getId() {
+        return id;
+    }
     public String getName() {
         return name;
     }

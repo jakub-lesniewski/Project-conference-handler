@@ -10,7 +10,6 @@ function Login() {
     email: "",
     password: "",
   });
-  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   const { email, password } = userCredentials;
@@ -26,8 +25,6 @@ function Login() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setLoading(true);
-
     console.log(userCredentials);
 
     const response = await loginUser(email, password);
@@ -42,12 +39,9 @@ function Login() {
         affilation: response.affilation,
       });
 
-      if (user) {
-        navigate(`/user/${user.id}`);
-      }
+      console.log("logged user", user);
+      navigate(`/user/${user.id}`);
     }
-
-    console.log("logged user", user);
   }
 
   return (
@@ -73,7 +67,7 @@ function Login() {
           onChange={handleInputChange}
         />
 
-        <Button onClick={handleSubmit} type="submit" />
+        <Button type="submit" />
       </form>
     </div>
   );

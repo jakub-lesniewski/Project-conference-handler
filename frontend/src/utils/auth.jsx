@@ -1,4 +1,5 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext } from "react";
+import useLocalStorage from "./useLocalStorage"; // Replace with the correct import path for your hook
 
 const AuthContext = createContext();
 
@@ -7,18 +8,18 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
+  const [storedUser, setStoredUser] = useLocalStorage("user", null);
 
   function login(userData) {
-    setUser(userData);
+    setStoredUser(userData);
   }
 
   function logout() {
-    setUser(null);
+    setStoredUser(null);
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user: storedUser, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

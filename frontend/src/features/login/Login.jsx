@@ -23,6 +23,7 @@ function Login() {
     });
   }
 
+  // TODO implement loader element
   async function handleSubmit(e) {
     e.preventDefault();
     console.log(userCredentials);
@@ -40,7 +41,7 @@ function Login() {
       });
 
       console.log("logged user", user);
-      navigate(`/user/${user.id}`);
+      navigate(`/user/${response.id}`);
     }
   }
 

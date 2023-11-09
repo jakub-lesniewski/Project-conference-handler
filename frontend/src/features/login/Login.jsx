@@ -1,9 +1,9 @@
-import { Form } from "react-router-dom";
 import InputForm from "../../ui/InputForm";
 import Button from "../../ui/Button";
-import axios from "axios";
 import { useState } from "react";
-import { loginUser } from "./api";
+import { loginUser } from "../../services/api";
+import { useAuth } from "../../utlis/auth";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [userCredentials, setUserCredentials] = useState({
@@ -11,7 +11,9 @@ function Login() {
     password: "",
   });
 
+  const navigate = useNavigate();
   const { email, password } = userCredentials;
+  const { user, login } = useAuth();
 
   function handleInputChange(e) {
     const { name, value } = e.target;
@@ -27,7 +29,21 @@ function Login() {
     console.log(userCredentials);
 
     const response = await loginUser(email, password);
-    console.log(response);
+    console.log("api response", response);
+
+    if (response.id) {
+      login({
+        id: response.id,
+        name: response.name,
+        surname: response.surname,
+        email_login: response.email_login,
+        affilation: response.affilation,
+      });
+
+      navigate(`/user/${user.id}`);
+    }
+
+    console.log("logged user", user);
   }
 
   return (
@@ -57,24 +73,6 @@ function Login() {
       </form>
     </div>
   );
-}
-
-export async function action({ request }) {
-  // TODO make it a util function
-  const config = {
-    method: "post",
-    maxBodyLength: Infinity,
-    url: "http://localhost:8080/login",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: JSON.stringify(data),
-  };
-
-  const response = await axios.request(config);
-  const responseData = response.data;
-
-  console.log(responseData);
 }
 
 export default Login;

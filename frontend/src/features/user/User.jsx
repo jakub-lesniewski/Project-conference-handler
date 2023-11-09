@@ -1,4 +1,4 @@
-import { useAuth } from "../../utlis/auth";
+import { useAuth } from "../../utils/auth";
 
 function User() {
   const { user, logout } = useAuth();

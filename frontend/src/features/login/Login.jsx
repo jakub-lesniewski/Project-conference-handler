@@ -2,7 +2,7 @@ import InputForm from "../../ui/InputForm";
 import Button from "../../ui/Button";
 import { useState } from "react";
 import { loginUser } from "../../services/api";
-import { useAuth } from "../../utlis/auth";
+import { useAuth } from "../../utils/auth";
 import { useNavigate } from "react-router-dom";
 
 function Login() {
@@ -10,6 +10,7 @@ function Login() {
     email: "",
     password: "",
   });
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   const { email, password } = userCredentials;
@@ -25,6 +26,7 @@ function Login() {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    setLoading(true);
 
     console.log(userCredentials);
 
@@ -40,7 +42,9 @@ function Login() {
         affilation: response.affilation,
       });
 
-      navigate(`/user/${user.id}`);
+      if (user) {
+        navigate(`/user/${user.id}`);
+      }
     }
 
     console.log("logged user", user);

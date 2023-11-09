@@ -1,4 +1,5 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { AuthProvider, useAuth } from "./utlis/auth";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
@@ -10,7 +11,6 @@ import User from "./features/user/User";
 import Backoffice from "./features/backoffice/Backoffice";
 import UserLayout from "./features/user/UserLayout";
 import BackofficeLayout from "./features/backoffice/BackofficeLayout";
-import { AuthProvider } from "./utlis/auth";
 
 const router = createBrowserRouter([
   {
@@ -35,6 +35,7 @@ const router = createBrowserRouter([
       },
     ],
     errorElement: <ErrorPage />,
+    canActivate: (user) => user !== null,
   },
 
   {

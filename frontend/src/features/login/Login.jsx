@@ -32,7 +32,7 @@ function Login() {
     console.log("api response", response);
 
     if (response.id) {
-      login({
+      await login({
         id: response.id,
         name: response.name,
         surname: response.surname,

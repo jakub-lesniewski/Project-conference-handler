@@ -42,6 +42,7 @@ public class UserService {
 
     public  List<Participant> getParticipants()
     {
+        users=participantRepository.findAll();
         return users;
     }
 }

@@ -1,11 +1,14 @@
 package com.FMCSULconferencehandler.model;
 
 
+import com.FMCSULconferencehandler.model.conference.Attendance_Event;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
 import java.util.UUID;
 
 
@@ -25,7 +28,8 @@ public class Participant {
     private String affilation;
     private String password;
 
-
+    @OneToMany(mappedBy = "participant")
+    private Set<Attendance_Event> attendence_event;
 
 
     public Participant( String name, String surname, String email_login, String affilation, String password) {

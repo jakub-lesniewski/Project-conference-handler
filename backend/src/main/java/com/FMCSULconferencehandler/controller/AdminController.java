@@ -1,6 +1,6 @@
 package com.FMCSULconferencehandler.controller;
 
-import com.FMCSULconferencehandler.AdminRepository;
+import com.FMCSULconferencehandler.repositories.AdminRepository;
 import com.FMCSULconferencehandler.model.Admin;
 import com.FMCSULconferencehandler.model.Participant;
 import com.FMCSULconferencehandler.model.UserService;

@@ -25,4 +25,9 @@ public class Type {
         this.name = name;
         this.abbrevation = abbrevation;
     }
+
+
+
 }
+
+

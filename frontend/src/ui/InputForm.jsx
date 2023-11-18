@@ -1,13 +1,7 @@
 import { useState } from "react";
 import eyeIcon from "../assets/eyeIcon.svg";
 
-function InputForm({
-  type = "text",
-  placeholder = "placeholder",
-  value,
-  name,
-  onChange,
-}) {
+function InputForm({ type = "text", value, name, onChange, error = null }) {
   const [isPasswordVisible, setPasswordVisible] = useState(false);
 
   function togglePasswordVisibility() {
@@ -17,12 +11,16 @@ function InputForm({
   return (
     <div className="relative">
       <input
-        className="rounded-md border-2 p-1 pl-3 text-lg transition-all duration-300 focus:border-fmcsGreen focus:outline-none focus:ring-fmcsGreen"
-        placeholder={placeholder}
+        className={`rounded-md border-2 p-1 pl-3 text-lg transition-all duration-300 focus:border-fmcsGreen focus:outline-none focus:ring-fmcsGreen ${
+          error &&
+          "border-fmcsRed focus:border-fmcsRed focus:outline-none focus:ring-fmcsRed"
+        }`}
+        placeholder={name}
         type={isPasswordVisible ? "text" : type}
         value={value}
         name={name}
         onChange={onChange}
+        required
       />
 
       {type === "password" && (
@@ -34,6 +32,8 @@ function InputForm({
           />
         </button>
       )}
+
+      {error && <p className="absolute pl-1 text-sm text-fmcsRed">{error}</p>}
     </div>
   );
 }

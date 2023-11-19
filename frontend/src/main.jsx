@@ -9,7 +9,6 @@ import ErrorPage from "./ui/ErrorPage";
 import Login from "./features/login/Login";
 import User from "./features/user/User";
 import Backoffice from "./features/backoffice/Backoffice";
-import UserLayout from "./features/user/UserLayout";
 import BackofficeLayout from "./features/backoffice/BackofficeLayout";
 
 const router = createBrowserRouter([
@@ -21,21 +20,13 @@ const router = createBrowserRouter([
         path: "/",
         element: <Login />,
       },
-    ],
-    errorElement: <ErrorPage />,
-  },
-
-  {
-    path: "/user/:id",
-    element: <UserLayout />,
-    children: [
       {
         path: "/user/:id",
         element: <User />,
+        canActivate: (user) => user !== null,
       },
     ],
     errorElement: <ErrorPage />,
-    canActivate: (user) => user !== null,
   },
 
   {

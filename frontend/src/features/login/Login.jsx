@@ -1,85 +1,62 @@
-import InputForm from "../../ui/InputForm";
+import { useForm } from "react-hook-form";
+import { emailPattern } from "./helpers";
 import Button from "../../ui/Button";
-import { useState } from "react";
-import { loginUser } from "../../services/api";
-import { useAuth } from "../../utils/auth";
-import { useNavigate } from "react-router-dom";
-import { isValidEmail } from "./helpers";
+import warningIcon from "../../assets/warning-icon.svg";
 
 function Login() {
-  const [userCredentials, setUserCredentials] = useState({
-    email: "",
-    password: "",
-  });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm("OnSubmit");
 
-  const navigate = useNavigate();
-  const { email, password } = userCredentials;
-  const { user, login } = useAuth();
-  const errors = {};
-
-  function handleInputChange(e) {
-    const { name, value } = e.target;
-    setUserCredentials({
-      ...userCredentials,
-      [name]: value,
-    });
-  }
-
-  // TODO implement loader element
-  async function handleSubmit(e) {
-    e.preventDefault();
-    console.log(userCredentials);
-
-    if (!isValidEmail(email)) {
-      errors.email = "Invalid email format";
-      console.log("Invalid email format");
-    }
-
-    const response = await loginUser(email, password);
-    console.log("api response", response);
-
-    if (response.id) {
-      login({
-        id: response.id,
-        name: response.name,
-        surname: response.surname,
-        email_login: response.email_login,
-        affilation: response.affilation,
-      });
-
-      // temporary solution
-      // needs to take from user, not response
-      // need to make sure user exist when accessing
-      console.log("logged user", user);
-      navigate(`/user/${response.id}`);
-    }
+  function onSubmit(data) {
+    console.log(data);
   }
 
   return (
-    <div className="flex flex-col items-center gap-5">
-      <div className="flex">
-        <h1 className="text-2xl font-semibold tracking-widest">login</h1>
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-7">
+      <div>
+        <input
+          {...register("email", {
+            required: "Email is required",
+            pattern: {
+              value: emailPattern,
+              message: "Invalid email format",
+            },
+          })}
+          placeholder="email"
+          type="email"
+          className="relative rounded-md border-2 p-1 pl-3 text-lg transition-all duration-300 focus:border-fmcsGreen focus:outline-none focus:ring-fmcsGreen"
+        />
+        {errors.email && (
+          <p className="absolute pl-1 text-sm text-fmcsRed">
+            {errors.email.message}
+          </p>
+        )}
       </div>
 
-      <form className="flex flex-col gap-7" onSubmit={handleSubmit}>
-        <InputForm
-          type="text"
-          value={email}
-          name="email"
-          onChange={handleInputChange}
-          error={errors?.email}
-        />
-
-        <InputForm
+      <div>
+        <input
+          {...register("password", { required: "Password is required" })}
+          placeholder="password"
           type="password"
-          value={password}
-          name="password"
-          onChange={handleInputChange}
+          className="relative rounded-md border-2 p-1 pl-3 text-lg transition-all duration-300 focus:border-fmcsGreen focus:outline-none focus:ring-fmcsGreen"
         />
+        {errors.password && (
+          <p className="absolute flex items-center gap-1 pl-1 text-sm text-fmcsRed">
+            <img
+              src={warningIcon}
+              alt="error icon"
+              className="h-3 text-fmcsRed"
+            />
+            {errors.password.message}
+          </p>
+        )}
+      </div>
 
-        <Button type="submit" />
-      </form>
-    </div>
+      <Button type="submit">submit</Button>
+    </form>
   );
 }
 

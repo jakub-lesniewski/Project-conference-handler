@@ -3,7 +3,7 @@ package com.FMCSULconferencehandler.controller;
 import com.FMCSULconferencehandler.AdminRepository;
 import com.FMCSULconferencehandler.model.Admin;
 import com.FMCSULconferencehandler.model.Participant;
-import com.FMCSULconferencehandler.model.UserService;
+import com.FMCSULconferencehandler.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -43,11 +43,9 @@ public class AdminController {
     @PostMapping("/addUser")
     public String  addUser( @RequestBody Participant... reqUsers)
     {
-        int x=0;
         for(Participant reqUser:reqUsers) {
             if (reqUser.getName() != null && reqUser.getSurname() != null && reqUser.getEmail_login() != null && reqUser.getAffilation() != null) {
                 reqUser.setPassword(passwordGenerate());
-                x++;
             }
             else
             {
@@ -55,7 +53,7 @@ public class AdminController {
             }
         }
         userService.add(reqUsers);
-        return "Added "+x+" participants";
+        return "Added "+ reqUsers.length +" participants";
     }
     private String passwordGenerate()
     {

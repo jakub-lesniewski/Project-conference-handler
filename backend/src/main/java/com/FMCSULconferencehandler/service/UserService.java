@@ -1,6 +1,7 @@
-package com.FMCSULconferencehandler.model;
+package com.FMCSULconferencehandler.service;
 
 import com.FMCSULconferencehandler.ParticipantRepository;
+import com.FMCSULconferencehandler.model.Participant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,9 @@ import java.util.List;
 public class UserService {
     @Autowired
     private ParticipantRepository participantRepository;
+
+    @Autowired
+    private EmailService emailService;
     private List<Participant> users=new LinkedList<>();
     public UserService(ParticipantRepository participantRepository)
     {
@@ -25,6 +29,7 @@ public class UserService {
         {
             users.add(user);
             participantRepository.save(user);
+            emailService.sendAccountCreationMessage(user);
         }
 
     }

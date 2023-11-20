@@ -30,6 +30,10 @@ public class Session {
     private String building;
     private String room_number;
 
+
+
+
+
     public Session(String name, LocalDateTime time_start, LocalDateTime time_end, String city, String street, String building, String room_number) {
         this.name = name;
         this.time_start = time_start;

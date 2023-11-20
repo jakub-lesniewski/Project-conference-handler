@@ -9,7 +9,7 @@ import com.FMCSULconferencehandler.repositories.SessionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -40,7 +40,9 @@ public class ConferenceService {
 
     public void addEvent(Event event)
     {
-
+       /* UUID sessionId = event.getSession().getId();
+        Session session = sessionRepository.findById(sessionId).orElse(null);
+        event.setSession(session);*/
         eventRepository.save(event);
     }
 
@@ -51,14 +53,24 @@ public class ConferenceService {
 
         event.setAmount_of_participants(event.getAmount_of_participants()+1);
 
-        Set<Attendance_Event> attendenceEvents = event.getEvent_fk();
         Attendance_Event attendenceEvent=new Attendance_Event(event,participant);
-        attendenceEvents.add(attendenceEvent);
 
-        eventRepository.save(event);
-
-
-
+        attendenceEventRepository.save(attendenceEvent);
     }
+    public List<Event> participantEvent(UUID id)
+    {
+        List<Event> eventList = attendenceEventRepository.findByParticipantId(id);
+
+        return  eventList;
+    }
+
+    public List<Event> eventsInSession(UUID id)
+    {
+        List<Event> eventList = eventRepository.findBySession_fk(id);
+
+        return  eventList;
+    }
+
+
 
 }

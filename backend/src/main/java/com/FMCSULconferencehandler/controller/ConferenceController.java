@@ -9,6 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/admin")
 public class ConferenceController {
@@ -30,14 +33,29 @@ public class ConferenceController {
     public ResponseEntity<Event> addEvent(@RequestBody Event event)
     {
         conferenceService.addEvent(event);
+
         return new ResponseEntity<>(event, HttpStatus.CREATED);
     }
 
-    @PutMapping ("/ParticipantToEvent")
+    @PostMapping ("/ParticipantToEvent")
     public ResponseEntity<String> addParticipantToEvent(@RequestBody ParticipantToEventDTO dto)
     {
         conferenceService.addParticipantToEvent(dto.getIdEvent(),dto.getIdParticipant());
         return new ResponseEntity<>("PARTICIPANT ADDED", HttpStatus.OK);
+    }
+
+
+    @GetMapping("/attendance/{id}")
+    public ResponseEntity<List<Event>> eventsForParticipants(@PathVariable("id") UUID id)
+    {
+        return new  ResponseEntity<>(conferenceService.participantEvent(id),HttpStatus.OK);
+    }
+
+    @GetMapping("/eventInSession/{id}")
+    public ResponseEntity<List<Event>> eventInSession(@PathVariable("id") UUID id)
+    {
+        List<Event> eventList = conferenceService.eventsInSession(id);
+        return new ResponseEntity<>(eventList, HttpStatus.OK);
     }
 
 }

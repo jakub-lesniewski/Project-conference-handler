@@ -47,8 +47,8 @@ public class Event {
         this.amount_of_participants = 0;
 
     }
-    public Event(UUID id, LocalDateTime time_start, LocalDateTime time_end, String name,UUID session ){
-        this.id = id;
+    public Event( LocalDateTime time_start, LocalDateTime time_end, String name,UUID session ){
+
         this.time_start = time_start;
         this.time_end = time_end;
         this.name = name;

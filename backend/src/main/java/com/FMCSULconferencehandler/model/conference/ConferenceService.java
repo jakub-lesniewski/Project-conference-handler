@@ -2,34 +2,32 @@ package com.FMCSULconferencehandler.model.conference;
 
 
 import com.FMCSULconferencehandler.model.Participant;
-import com.FMCSULconferencehandler.repositories.Attendence_EventRepository;
-import com.FMCSULconferencehandler.repositories.EventRepository;
-import com.FMCSULconferencehandler.repositories.ParticipantRepository;
-import com.FMCSULconferencehandler.repositories.SessionRepository;
+import com.FMCSULconferencehandler.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class ConferenceService {
-    @Autowired
     private SessionRepository sessionRepository;
-    @Autowired
     private EventRepository eventRepository;
-    @Autowired
     private Attendence_EventRepository attendenceEventRepository;
+    private Attendence_LectureRepository  attendenceLectureRepository;
 
-    @Autowired
     private ParticipantRepository participantRepository;
+    private LectureRepository lectureRepository;
 
 
-    public ConferenceService(SessionRepository sessionRepository, EventRepository eventRepository, Attendence_EventRepository attendenceEventRepository, ParticipantRepository participantRepository) {
+@Autowired
+    public ConferenceService(SessionRepository sessionRepository,Attendence_LectureRepository attendenceLectureRepository,LectureRepository lectureRepository, EventRepository eventRepository, Attendence_EventRepository attendenceEventRepository, ParticipantRepository participantRepository) {
         this.sessionRepository = sessionRepository;
         this.eventRepository = eventRepository;
         this.attendenceEventRepository = attendenceEventRepository;
         this.participantRepository = participantRepository;
+        this.lectureRepository=lectureRepository;
+        this.attendenceLectureRepository=attendenceLectureRepository;
+
     }
 
     public void addSession(Session session)
@@ -70,7 +68,76 @@ public class ConferenceService {
 
         return  eventList;
     }
+    public Lecture addLecture(LectureRequest lecture)
+    {
+        Event event = new Event(lecture.getTime_start(),lecture.getTime_end()
+                ,lecture.getName(),lecture.getSession_fk());
 
 
+        eventRepository.save(event);
+        Lecture lecture1=new Lecture(lecture.getTopic(),lecture.getAbstract(),event);
 
+        lectureRepository.save(lecture1);
+
+        List<UUID> idSpeakers=lecture.getIdSpeakers();
+        for(UUID id :idSpeakers)
+        {
+            addSpeakertoLecture(lecture1.getId(),id);
+        }
+
+
+        return lecture1;
+    }
+
+
+    public Lecture getLectureById(UUID id) {
+        return lectureRepository.findById(id).orElseThrow(() -> new RuntimeException("lecture not found"));
+
+    }
+    public HashMap<String,Object>getJsonLecture(UUID id)
+    {
+        HashMap<String,Object> json=getLectureById(id).jsonLong();
+        List<String> speakerIds = new ArrayList<>();
+        for(Participant p : attendenceLectureRepository.findByLectureId(id))
+        {
+            speakerIds.add(p.getId().toString());
+        }
+        json.put("speaker",speakerIds);
+        return json;
+    }
+
+    public void addSpeakertoLecture( UUID event_ID,UUID... participant_id)
+    {
+        Lecture lecture = lectureRepository.findById(event_ID).orElseThrow(() -> new RuntimeException("Lecture not found"));
+
+        for(UUID participant_id2:participant_id)
+        {
+            Participant participant=participantRepository.findById(participant_id2).orElseThrow(() -> new RuntimeException("participant not found"));
+            lecture.getEvent().setAmount_of_participants(lecture.getEvent().getAmount_of_participants()+1);
+
+            Attendance_Lecture attendenceLecture=new Attendance_Lecture(lecture,participant);
+
+            attendenceLectureRepository.save(attendenceLecture);
+        }
+
+    }
+    public  HashMap<String,Object> getConference()
+    {
+        HashMap<String, Object> json = new HashMap<>();
+        for (Session session : sessionRepository.findAll()) {
+            json.put("SESSION", session);
+            List<Event> events = new ArrayList<>();
+            List<Map<String, Object>> lecturesData = new ArrayList<>();
+
+            for (Event e : eventRepository.findBySession_fk(session.getId())) {
+                for (Lecture l : lectureRepository.findByEvent_fk(e.getId())) {
+                    lecturesData.add(getJsonLecture(l.getId()));
+                }
+                events.add(e);
+            }
+            json.put("EVENT", events);
+            json.put("LECTURE", lecturesData);
+        }
+        return json;
+    }
 }

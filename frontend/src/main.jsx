@@ -1,5 +1,5 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { AuthProvider, useAuth } from "./utils/auth";
+import { AuthProvider } from "./utils/auth";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";

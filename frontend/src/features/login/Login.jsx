@@ -4,6 +4,7 @@ import { useState } from "react";
 import { loginUser } from "../../services/api";
 import { useAuth } from "../../utils/auth";
 import { useNavigate } from "react-router-dom";
+import { isValidEmail } from "./helpers";
 
 function Login() {
   const [userCredentials, setUserCredentials] = useState({
@@ -14,6 +15,7 @@ function Login() {
   const navigate = useNavigate();
   const { email, password } = userCredentials;
   const { user, login } = useAuth();
+  const errors = {};
 
   function handleInputChange(e) {
     const { name, value } = e.target;
@@ -28,11 +30,16 @@ function Login() {
     e.preventDefault();
     console.log(userCredentials);
 
+    if (!isValidEmail(email)) {
+      errors.email = "Invalid email format";
+      console.log("Invalid email format");
+    }
+
     const response = await loginUser(email, password);
     console.log("api response", response);
 
     if (response.id) {
-      await login({
+      login({
         id: response.id,
         name: response.name,
         surname: response.surname,
@@ -40,6 +47,9 @@ function Login() {
         affilation: response.affilation,
       });
 
+      // temporary solution
+      // needs to take from user, not response
+      // need to make sure user exist when accessing
       console.log("logged user", user);
       navigate(`/user/${response.id}`);
     }
@@ -51,18 +61,17 @@ function Login() {
         <h1 className="text-2xl font-semibold tracking-widest">login</h1>
       </div>
 
-      <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
+      <form className="flex flex-col gap-7" onSubmit={handleSubmit}>
         <InputForm
           type="text"
-          placeholder="email"
           value={email}
           name="email"
           onChange={handleInputChange}
+          error={errors?.email}
         />
 
         <InputForm
           type="password"
-          placeholder="password"
           value={password}
           name="password"
           onChange={handleInputChange}

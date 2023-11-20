@@ -12,7 +12,7 @@ function Login() {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm("OnSubmit");
+  } = useForm();
 
   async function onSubmit(data) {}
 
@@ -26,7 +26,8 @@ function Login() {
       }}
       onSubmit={handleSubmit(onSubmit)}
       onSuccess={async ({ response }) => {
-        console.log(await response.json());
+        const user = await response.json();
+        console.log(user.SUCCESS);
       }}
       onError={async ({ response }) => {
         console.log(await response.json());

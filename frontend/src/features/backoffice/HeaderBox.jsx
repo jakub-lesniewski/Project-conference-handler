@@ -1,4 +1,4 @@
-import SquareButton from "./SquareButton";
+import SquareButton from "../../ui/SquareButton";
 
 function HeaderBox() {
   return (

@@ -2,9 +2,9 @@ import { Outlet } from "react-router-dom";
 
 function BackofficeLayout() {
   return (
-    <div>
+    <main className="flex h-screen w-screen justify-center">
       <Outlet />
-    </div>
+    </main>
   );
 }
 

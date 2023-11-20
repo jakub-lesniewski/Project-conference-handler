@@ -25,7 +25,12 @@ public class Participant {
     private String affilation;
     private String password;
 
+/*    public Set<Attendance_Event> getAttendence_event() {
+        return attendence_event;
+    }
 
+    @OneToMany(mappedBy = "participant")
+    private Set<Attendance_Event> attendence_event;*/
 
 
     public Participant( String name, String surname, String email_login, String affilation, String password) {

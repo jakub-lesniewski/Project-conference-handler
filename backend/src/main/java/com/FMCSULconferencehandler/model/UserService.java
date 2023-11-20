@@ -1,6 +1,7 @@
 package com.FMCSULconferencehandler.model;
 
-import com.FMCSULconferencehandler.ParticipantRepository;
+import com.FMCSULconferencehandler.repositories.ParticipantRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -8,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Service
+@Transactional
 public class UserService {
     @Autowired
     private ParticipantRepository participantRepository;
@@ -42,6 +44,7 @@ public class UserService {
 
     public  List<Participant> getParticipants()
     {
+        users=participantRepository.findAll();
         return users;
     }
 }

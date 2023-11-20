@@ -2,9 +2,14 @@ package com.FMCSULconferencehandler.controller;
 
 import com.FMCSULconferencehandler.model.Participant;
 import com.FMCSULconferencehandler.model.UserService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 public class LoginController {
@@ -14,20 +19,26 @@ public class LoginController {
 
     }
     @PostMapping("/login")
-    public Object login(@RequestBody Participant reqUser) {
+    public ResponseEntity<?> login(@RequestBody Participant reqUser) {
         Participant user=userService.getUserByEmail(reqUser.getEmail_login());
+        Map<String, Object> object = new HashMap<>();
+
         if(user==null)
         {
-            return "USER NOT FOUND";
+            object.put("ERROR", "USER NOT FOUND");
+            return new ResponseEntity<>(object, HttpStatus.BAD_REQUEST);
         }
         else if( reqUser.getPassword().equals(user.getPassword()))
         {
-            return user;
+            object.put("SUCCESS",user);
+            return new ResponseEntity<>(object, HttpStatus.ACCEPTED);
         }
         else
         {
-            return "INVALID PASSWORD";
+            object.put("ERROR", "INVALID PASSWORD");
+            return new ResponseEntity<>(object, HttpStatus.CONFLICT);
         }
     }
+
 
 }

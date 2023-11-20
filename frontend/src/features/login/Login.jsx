@@ -2,8 +2,12 @@ import { Form, useForm } from "react-hook-form";
 import { emailPattern } from "./helpers";
 import Button from "../../ui/Button";
 import warningIcon from "../../assets/warning-icon.svg";
+import { useState } from "react";
+import axios from "axios";
 
 function Login() {
+  const [isLoading, setIsLoading] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -11,19 +15,23 @@ function Login() {
     formState: { errors },
   } = useForm("OnSubmit");
 
-  function onSubmit(data) {
-    console.log(data);
+  async function onSubmit(data) {
+    const response = await axios.post;
   }
 
   return (
     <Form
+      control={control}
       action="http://localhost:8080/login"
       method="post"
       headers={{
         "Content-Type": "application/json",
       }}
       onSubmit={handleSubmit(onSubmit)}
-      control={control}
+      onSuccess={() => {
+        alert("Success");
+      }}
+      // onError={() => alert("Error")}
       className="flex flex-col gap-5"
     >
       <div>

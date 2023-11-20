@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { Form, useForm } from "react-hook-form";
 import { emailPattern } from "./helpers";
 import Button from "../../ui/Button";
 import warningIcon from "../../assets/warning-icon.svg";
@@ -7,6 +7,7 @@ function Login() {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm("OnSubmit");
 
@@ -15,7 +16,16 @@ function Login() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-7">
+    <Form
+      action="http://localhost:8080/login"
+      method="post"
+      headers={{
+        "Content-Type": "application/json",
+      }}
+      onSubmit={handleSubmit(onSubmit)}
+      control={control}
+      className="flex flex-col gap-5"
+    >
       <div>
         <input
           {...register("email", {
@@ -30,7 +40,12 @@ function Login() {
           className="relative rounded-md border-2 p-1 pl-3 text-lg transition-all duration-300 focus:border-fmcsGreen focus:outline-none focus:ring-fmcsGreen"
         />
         {errors.email && (
-          <p className="absolute pl-1 text-sm text-fmcsRed">
+          <p className="absolute flex items-center gap-1 pl-1 text-sm text-fmcsRed">
+            <img
+              src={warningIcon}
+              alt="error icon"
+              className="h-3 text-fmcsRed"
+            />
             {errors.email.message}
           </p>
         )}
@@ -56,7 +71,7 @@ function Login() {
       </div>
 
       <Button type="submit">submit</Button>
-    </form>
+    </Form>
   );
 }
 

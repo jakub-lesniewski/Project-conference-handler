@@ -3,7 +3,6 @@ import { emailPattern } from "./helpers";
 import Button from "../../ui/Button";
 import warningIcon from "../../assets/warning-icon.svg";
 import { useState } from "react";
-import axios from "axios";
 
 function Login() {
   const [isLoading, setIsLoading] = useState(false);
@@ -15,9 +14,7 @@ function Login() {
     formState: { errors },
   } = useForm("OnSubmit");
 
-  async function onSubmit(data) {
-    const response = await axios.post;
-  }
+  async function onSubmit(data) {}
 
   return (
     <Form
@@ -28,15 +25,19 @@ function Login() {
         "Content-Type": "application/json",
       }}
       onSubmit={handleSubmit(onSubmit)}
-      onSuccess={() => {
-        alert("Success");
+      onSuccess={async ({ response }) => {
+        console.log(await response.json());
       }}
-      // onError={() => alert("Error")}
+      onError={async ({ response }) => {
+        console.log(await response.json());
+      }}
       className="flex flex-col gap-5"
     >
+      <h1 className="text-center text-lg font-bold tracking-wider">login</h1>
+
       <div>
         <input
-          {...register("email", {
+          {...register("email_login", {
             required: "Email is required",
             pattern: {
               value: emailPattern,
@@ -47,14 +48,14 @@ function Login() {
           type="email"
           className="relative rounded-md border-2 p-1 pl-3 text-lg transition-all duration-300 focus:border-fmcsGreen focus:outline-none focus:ring-fmcsGreen"
         />
-        {errors.email && (
+        {errors.email_login && (
           <p className="absolute flex items-center gap-1 pl-1 text-sm text-fmcsRed">
             <img
               src={warningIcon}
               alt="error icon"
               className="h-3 text-fmcsRed"
             />
-            {errors.email.message}
+            {errors.email_login.message}
           </p>
         )}
       </div>

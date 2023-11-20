@@ -10,6 +10,7 @@ import Login from "./features/login/Login";
 import User from "./features/user/User";
 import Backoffice from "./features/backoffice/Backoffice";
 import BackofficeLayout from "./features/backoffice/BackofficeLayout";
+import { BackofficeProvider } from "./features/backoffice/BackofficeContext";
 
 const router = createBrowserRouter([
   {
@@ -45,7 +46,9 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <AuthProvider>
-      <RouterProvider router={router} />
+      <BackofficeProvider>
+        <RouterProvider router={router} />
+      </BackofficeProvider>
     </AuthProvider>
   </React.StrictMode>,
 );

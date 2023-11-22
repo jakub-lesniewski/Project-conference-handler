@@ -25,17 +25,17 @@ public class LoginController {
 
         if(user==null)
         {
-            object.put("ERROR", "USER NOT FOUND");
+            object.put("error", "user not found");
             return new ResponseEntity<>(object, HttpStatus.BAD_REQUEST);
         }
         else if( reqUser.getPassword().equals(user.getPassword()))
         {
-            object.put("SUCCESS",user);
+            object.put("user",user);
             return new ResponseEntity<>(object, HttpStatus.ACCEPTED);
         }
         else
         {
-            object.put("ERROR", "INVALID PASSWORD");
+            object.put("error", "invalid password");
             return new ResponseEntity<>(object, HttpStatus.CONFLICT);
         }
     }

@@ -39,7 +39,7 @@ public class AdminController {
         {
             return new ResponseEntity<>(admin, HttpStatus.OK);
         }
-        return new ResponseEntity<>("INVALID DATA", HttpStatus.EXPECTATION_FAILED);
+        return new ResponseEntity<>("invalid data", HttpStatus.EXPECTATION_FAILED);
     }
 
     @PostMapping("/addUser")
@@ -53,11 +53,11 @@ public class AdminController {
             }
             else
             {
-                return "Error";
+                return "error";
             }
         }
         userService.add(reqUsers);
-        return "Added "+x+" participants";
+        return "added "+x+" participants";
     }
     private String passwordGenerate()
     {

@@ -1,85 +1,87 @@
-import InputForm from "../../ui/InputForm";
+import { Form, useForm } from "react-hook-form";
+import { emailPattern } from "./helpers";
 import Button from "../../ui/Button";
+import warningIcon from "../../assets/warning-icon.svg";
 import { useState } from "react";
-import { loginUser } from "../../services/api";
-import { useAuth } from "../../utils/auth";
-import { useNavigate } from "react-router-dom";
-import { isValidEmail } from "./helpers";
 
 function Login() {
-  const [userCredentials, setUserCredentials] = useState({
-    email: "",
-    password: "",
-  });
+  const [isLoading, setIsLoading] = useState(false);
 
-  const navigate = useNavigate();
-  const { email, password } = userCredentials;
-  const { user, login } = useAuth();
-  const errors = {};
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm();
 
-  function handleInputChange(e) {
-    const { name, value } = e.target;
-    setUserCredentials({
-      ...userCredentials,
-      [name]: value,
-    });
-  }
-
-  // TODO implement loader element
-  async function handleSubmit(e) {
-    e.preventDefault();
-    console.log(userCredentials);
-
-    if (!isValidEmail(email)) {
-      errors.email = "Invalid email format";
-      console.log("Invalid email format");
-    }
-
-    const response = await loginUser(email, password);
-    console.log("api response", response);
-
-    if (response.id) {
-      login({
-        id: response.id,
-        name: response.name,
-        surname: response.surname,
-        email_login: response.email_login,
-        affilation: response.affilation,
-      });
-
-      // temporary solution
-      // needs to take from user, not response
-      // need to make sure user exist when accessing
-      console.log("logged user", user);
-      navigate(`/user/${response.id}`);
-    }
-  }
+  async function onSubmit(data) {}
 
   return (
-    <div className="flex flex-col items-center gap-5">
-      <div className="flex">
-        <h1 className="text-2xl font-semibold tracking-widest">login</h1>
+    <Form
+      control={control}
+      action="http://localhost:8080/login"
+      method="post"
+      headers={{
+        "Content-Type": "application/json",
+      }}
+      onSubmit={handleSubmit(onSubmit)}
+      onSuccess={async ({ response }) => {
+        const user = await response.json();
+        console.log(user.SUCCESS);
+      }}
+      onError={async ({ response }) => {
+        console.log(await response.json());
+      }}
+      className="flex flex-col gap-5"
+    >
+      <h1 className="text-center text-lg font-bold tracking-wider">login</h1>
+
+      <div>
+        <input
+          {...register("email_login", {
+            required: "Email is required",
+            pattern: {
+              value: emailPattern,
+              message: "Invalid email format",
+            },
+          })}
+          placeholder="email"
+          type="email"
+          className="relative rounded-md border-2 p-1 pl-3 text-lg transition-all duration-300 focus:border-fmcsGreen focus:outline-none focus:ring-fmcsGreen"
+        />
+        {errors.email_login && (
+          <p className="absolute flex items-center gap-1 pl-1 text-sm text-fmcsRed">
+            <img
+              src={warningIcon}
+              alt="error icon"
+              className="h-3 text-fmcsRed"
+            />
+            {errors.email_login.message}
+          </p>
+        )}
       </div>
 
-      <form className="flex flex-col gap-7" onSubmit={handleSubmit}>
-        <InputForm
-          type="text"
-          value={email}
-          name="email"
-          onChange={handleInputChange}
-          error={errors?.email}
-        />
-
-        <InputForm
+      <div>
+        <input
+          {...register("password", { required: "Password is required" })}
+          placeholder="password"
           type="password"
-          value={password}
-          name="password"
-          onChange={handleInputChange}
+          className="relative rounded-md border-2 p-1 pl-3 text-lg transition-all duration-300 focus:border-fmcsGreen focus:outline-none focus:ring-fmcsGreen"
         />
+        {errors.password && (
+          <p className="absolute flex items-center gap-1 pl-1 text-sm text-fmcsRed">
+            <img
+              src={warningIcon}
+              alt="error icon"
+              className="h-3 text-fmcsRed"
+            />
+            {errors.password.message}
+          </p>
+        )}
+      </div>
 
-        <Button type="submit" />
-      </form>
-    </div>
+      <Button type="submit">submit</Button>
+    </Form>
   );
 }
 

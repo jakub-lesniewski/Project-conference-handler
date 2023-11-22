@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import useLocalStorage from "./useLocalStorage"; // Replace with the correct import path for your hook
+import useLocalStorage from "./useLocalStorage";
 
 const AuthContext = createContext();
 

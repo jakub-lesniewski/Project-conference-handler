@@ -1,9 +1,11 @@
 package com.FMCSULconferencehandler.controller;
 
-import com.FMCSULconferencehandler.AdminRepository;
+import com.FMCSULconferencehandler.repositories.AdminRepository;
 import com.FMCSULconferencehandler.model.Admin;
 import com.FMCSULconferencehandler.model.Participant;
 import com.FMCSULconferencehandler.service.UserService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,15 +31,15 @@ public class AdminController {
 
 
     @PostMapping("/login")
-    public Object  adminLogin(@RequestBody Admin reqAdmin)
+    public ResponseEntity<?> adminLogin(@RequestBody Admin reqAdmin)
     {
 
         Admin admin=adminRepository.findAll().get(0);
         if(admin.getLogin().equals(reqAdmin.getLogin()) && admin.getPass().equals(reqAdmin.getPass()))
         {
-            return admin;
+            return new ResponseEntity<>(admin, HttpStatus.OK);
         }
-        return "INVALID DATA";
+        return new ResponseEntity<>("invalid data", HttpStatus.EXPECTATION_FAILED);
     }
 
     @PostMapping("/addUser")
@@ -49,7 +51,7 @@ public class AdminController {
             }
             else
             {
-                return "Error";
+                return "error";
             }
         }
         userService.add(reqUsers);

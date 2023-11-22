@@ -1,4 +1,4 @@
-package com.FMCSULconferencehandler;
+package com.FMCSULconferencehandler.repositories;
 
 import com.FMCSULconferencehandler.model.Admin;
 import org.springframework.data.jpa.repository.JpaRepository;

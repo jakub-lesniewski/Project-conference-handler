@@ -31,7 +31,7 @@ public class UserService {
         {
             users.add(user);
             participantRepository.save(user);
-            emailService.sendAccountCreationMessage(user);
+            // emailService.sendAccountCreationMessage(user);   // Send an e-mail to every newly created user
         }
 
     }

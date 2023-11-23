@@ -9,9 +9,6 @@ function Backoffice() {
       <HeaderBox />
       <ConferenceBox />
       <SessionBox />
-      <ModalWindow>
-        <ConferenceBox />
-      </ModalWindow>
     </div>
   );
 }

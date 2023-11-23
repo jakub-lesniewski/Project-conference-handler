@@ -1,6 +1,7 @@
 import SessionBox from "./SessionBox";
 import HeaderBox from "./HeaderBox";
 import ConferenceBox from "./ConferenceBox";
+import ModalWindow from "../../ui/ModalWindow";
 
 function Backoffice() {
   return (
@@ -8,6 +9,9 @@ function Backoffice() {
       <HeaderBox />
       <ConferenceBox />
       <SessionBox />
+      <ModalWindow>
+        <ConferenceBox />
+      </ModalWindow>
     </div>
   );
 }

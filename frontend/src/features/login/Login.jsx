@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [isLoading, setIsLoading] = useState(false);
+  const [serverErrors, setServerErrors] = useState(""); // TODO
   const naviagate = useNavigate();
 
   const {
@@ -34,7 +35,9 @@ function Login() {
         naviagate(`/user/${user.id}`);
       }}
       onError={async ({ response }) => {
-        console.log(await response.json());
+        const res = await response.json();
+        setServerErrors(res.error);
+        console.log(serverErrors);
       }}
       className="flex flex-col gap-5"
     >

@@ -23,6 +23,27 @@ const dummySessions = [
     attendees: 18,
     maxAttendees: 25,
   },
+  {
+    id: 4,
+    name: "Session 4",
+    room: "A301",
+    attendees: 18,
+    maxAttendees: 25,
+  },
+  {
+    id: 5,
+    name: "Session 5",
+    room: "A301",
+    attendees: 18,
+    maxAttendees: 25,
+  },
+  {
+    id: 6,
+    name: "Session 6",
+    room: "A301",
+    attendees: 18,
+    maxAttendees: 25,
+  },
 ];
 
 function SessionBox() {
@@ -31,6 +52,7 @@ function SessionBox() {
       {dummySessions.map((session) => (
         <SessionElement key={session.id} session={session} />
       ))}
+
       <SquareButton>Add session</SquareButton>
     </section>
   );

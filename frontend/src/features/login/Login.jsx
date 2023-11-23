@@ -3,9 +3,12 @@ import { emailPattern } from "./helpers";
 import Button from "../../ui/Button";
 import warningIcon from "../../assets/warning-icon.svg";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [isLoading, setIsLoading] = useState(false);
+  const [serverErrors, setServerErrors] = useState(""); // TODO
+  const naviagate = useNavigate();
 
   const {
     register,
@@ -26,11 +29,15 @@ function Login() {
       }}
       onSubmit={handleSubmit(onSubmit)}
       onSuccess={async ({ response }) => {
-        const user = await response.json();
-        console.log(user.SUCCESS);
+        const data = await response.json();
+        const user = data.user;
+
+        naviagate(`/user/${user.id}`);
       }}
       onError={async ({ response }) => {
-        console.log(await response.json());
+        const res = await response.json();
+        setServerErrors(res.error);
+        console.log(serverErrors);
       }}
       className="flex flex-col gap-5"
     >

@@ -1,16 +1,15 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./utils/auth";
+import { BackofficeProvider } from "./features/backoffice/BackofficeContext";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-
 import LandingLayout from "./ui/LandingLayout";
 import ErrorPage from "./ui/ErrorPage";
 import Login from "./features/login/Login";
 import User from "./features/user/User";
 import Backoffice from "./features/backoffice/Backoffice";
 import BackofficeLayout from "./features/backoffice/BackofficeLayout";
-import { BackofficeProvider } from "./features/backoffice/BackofficeContext";
 
 const router = createBrowserRouter([
   {
@@ -24,7 +23,7 @@ const router = createBrowserRouter([
       {
         path: "/user/:id",
         element: <User />,
-        canActivate: (user) => user !== null,
+        isAuthenticated: (user) => user !== null,
       },
     ],
     errorElement: <ErrorPage />,

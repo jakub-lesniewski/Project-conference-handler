@@ -1,7 +1,7 @@
 package com.FMCSULconferencehandler.controller;
 
 import com.FMCSULconferencehandler.model.Participant;
-import com.FMCSULconferencehandler.model.UserService;
+import com.FMCSULconferencehandler.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

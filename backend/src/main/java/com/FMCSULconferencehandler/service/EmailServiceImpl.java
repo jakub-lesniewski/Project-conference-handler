@@ -29,7 +29,7 @@ public class EmailServiceImpl implements EmailService {
         Context context = new Context();
         context.setVariable("participant", participant);
 
-        sendEmailWithHtmlTemplate(participant.getEmail_login(), accountCreationSubject, "accountCreationMessage", context);
+        sendEmailWithHtmlTemplate(participant.getEmail(), accountCreationSubject, "accountCreationMessage", context);
     }
 
     private void sendEmailWithHtmlTemplate(String to, String subject, String templateName, Context context) {

@@ -1,6 +1,6 @@
 package com.FMCSULconferencehandler.repositories;
 
-import com.FMCSULconferencehandler.model.conference.Lecture;
+import com.FMCSULconferencehandler.model.Lecture;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

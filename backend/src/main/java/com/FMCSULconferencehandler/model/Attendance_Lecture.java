@@ -1,6 +1,5 @@
-package com.FMCSULconferencehandler.model.conference;
+package com.FMCSULconferencehandler.model;
 
-import com.FMCSULconferencehandler.model.Participant;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,22 +11,22 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Attendance_Event {
+public class Attendance_Lecture {
     @Id
     @GeneratedValue
     private UUID id;
 
   @ManyToOne
-    @JoinColumn(name="event_fk")
-    private Event event;
+    @JoinColumn(name="lecture_fk")
+    private Lecture lecture;
 
 
     @ManyToOne
     @JoinColumn(name="participant_fk")
     private Participant participant;
 
-    public Attendance_Event(Event event, Participant participant) {
-        this.event = event;
+    public Attendance_Lecture(Lecture lecture, Participant participant) {
+        this.lecture = lecture;
         this.participant = participant;
     }
 }

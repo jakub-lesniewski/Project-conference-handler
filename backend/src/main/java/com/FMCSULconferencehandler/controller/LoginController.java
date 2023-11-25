@@ -20,7 +20,7 @@ public class LoginController {
     }
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Participant reqUser) {
-        Participant user=userService.getUserByEmail(reqUser.getEmail_login());
+        Participant user=userService.getUserByEmail(reqUser.getEmail());
         Map<String, Object> object = new HashMap<>();
 
         if(user==null)

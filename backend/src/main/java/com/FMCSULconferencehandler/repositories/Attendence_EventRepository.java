@@ -1,7 +1,7 @@
 package com.FMCSULconferencehandler.repositories;
 
-import com.FMCSULconferencehandler.model.conference.Attendance_Event;
-import com.FMCSULconferencehandler.model.conference.Event;
+import com.FMCSULconferencehandler.model.Attendance_Event;
+import com.FMCSULconferencehandler.model.Event;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

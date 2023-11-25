@@ -13,7 +13,7 @@ const axiosInstance = axios.create({
 export async function loginUser(email, password) {
   try {
     const response = await axiosInstance.post("/login", {
-      email_login: email,
+      email: email,
       password,
     });
     return response.data;

@@ -1,9 +1,9 @@
-package com.FMCSULconferencehandler.model.conference;
+package com.FMCSULconferencehandler.service;
 
 
-import com.FMCSULconferencehandler.model.Participant;
+import com.FMCSULconferencehandler.model.*;
 import com.FMCSULconferencehandler.repositories.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -18,8 +18,6 @@ public class ConferenceService {
     private ParticipantRepository participantRepository;
     private LectureRepository lectureRepository;
 
-
-@Autowired
     public ConferenceService(SessionRepository sessionRepository,Attendence_LectureRepository attendenceLectureRepository,LectureRepository lectureRepository, EventRepository eventRepository, Attendence_EventRepository attendenceEventRepository, ParticipantRepository participantRepository) {
         this.sessionRepository = sessionRepository;
         this.eventRepository = eventRepository;
@@ -27,7 +25,6 @@ public class ConferenceService {
         this.participantRepository = participantRepository;
         this.lectureRepository=lectureRepository;
         this.attendenceLectureRepository=attendenceLectureRepository;
-
     }
 
     public void addSession(Session session)
@@ -51,9 +48,9 @@ public class ConferenceService {
 
         event.setAmount_of_participants(event.getAmount_of_participants()+1);
 
-        Attendance_Event attendenceEvent=new Attendance_Event(event,participant);
+        Attendance_Event attendanceEvent=new Attendance_Event(event,participant);
 
-        attendenceEventRepository.save(attendenceEvent);
+        attendenceEventRepository.save(attendanceEvent);
     }
     public List<Event> participantEvent(UUID id)
     {
@@ -68,6 +65,7 @@ public class ConferenceService {
 
         return  eventList;
     }
+    @Transactional
     public Lecture addLecture(LectureRequest lecture)
     {
         Event event = new Event(lecture.getTime_start(),lecture.getTime_end()
@@ -82,9 +80,8 @@ public class ConferenceService {
         List<UUID> idSpeakers=lecture.getIdSpeakers();
         for(UUID id :idSpeakers)
         {
-            addSpeakertoLecture(lecture1.getId(),id);
+            addSpeakerToLecture(lecture1.getId(),id);
         }
-
 
         return lecture1;
     }
@@ -106,7 +103,7 @@ public class ConferenceService {
         return json;
     }
 
-    public void addSpeakertoLecture( UUID event_ID,UUID... participant_id)
+    private void addSpeakerToLecture(UUID event_ID, UUID... participant_id)
     {
         Lecture lecture = lectureRepository.findById(event_ID).orElseThrow(() -> new RuntimeException("Lecture not found"));
 

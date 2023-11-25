@@ -45,7 +45,7 @@ function Login() {
 
       <div>
         <input
-          {...register("email_login", {
+          {...register("email", {
             required: "Email is required",
             pattern: {
               value: emailPattern,
@@ -56,14 +56,14 @@ function Login() {
           type="email"
           className="relative rounded-md border-2 p-1 pl-3 text-lg transition-all duration-300 focus:border-fmcsGreen focus:outline-none focus:ring-fmcsGreen"
         />
-        {errors.email_login && (
+        {errors.email && (
           <p className="absolute flex items-center gap-1 pl-1 text-sm text-fmcsRed">
             <img
               src={warningIcon}
               alt="error icon"
               className="h-3 text-fmcsRed"
             />
-            {errors.email_login.message}
+            {errors.email.message}
           </p>
         )}
       </div>

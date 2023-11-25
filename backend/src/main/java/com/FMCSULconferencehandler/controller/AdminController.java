@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 @RestController
@@ -29,24 +30,27 @@ public class AdminController {
         return userService.getParticipants();
     }
 
-
+    // Adding a new admin account with generated UUID
+    @PostMapping("/admin")
+    public void addAdmin(@RequestBody Admin reqAdmin) {
+        adminRepository.save(reqAdmin);
+    }
     @PostMapping("/login")
     public ResponseEntity<?> adminLogin(@RequestBody Admin reqAdmin)
     {
-
-        Admin admin=adminRepository.findAll().get(0);
-        if(admin.getLogin().equals(reqAdmin.getLogin()) && admin.getPass().equals(reqAdmin.getPass()))
+        Optional<Admin> admin = adminRepository.findByLoginAndPass(reqAdmin.getLogin(), reqAdmin.getPass());
+        if(admin.isPresent())
         {
-            return new ResponseEntity<>(admin, HttpStatus.OK);
+            return new ResponseEntity<>(admin.get(), HttpStatus.OK);
         }
-        return new ResponseEntity<>("invalid data", HttpStatus.EXPECTATION_FAILED);
+        return new ResponseEntity<>("invalid data", HttpStatus.UNAUTHORIZED);
     }
 
     @PostMapping("/addUser")
     public String  addUser( @RequestBody Participant... reqUsers)
     {
         for(Participant reqUser:reqUsers) {
-            if (reqUser.getName() != null && reqUser.getSurname() != null && reqUser.getEmail_login() != null && reqUser.getAffilation() != null) {
+            if (reqUser.getName() != null && reqUser.getSurname() != null && reqUser.getEmail() != null && reqUser.getAffiliation() != null) {
                 reqUser.setPassword(passwordGenerate());
             }
             else

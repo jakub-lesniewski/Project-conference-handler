@@ -39,7 +39,7 @@ public class UserService {
     {
         for(Participant user:users)
         {
-            if (user.getEmail_login().equals(email)) {
+            if (user.getEmail().equals(email)) {
                 return user;
             }
 

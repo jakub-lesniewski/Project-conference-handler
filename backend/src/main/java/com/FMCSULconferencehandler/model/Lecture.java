@@ -1,4 +1,4 @@
-package com.FMCSULconferencehandler.model.conference;
+package com.FMCSULconferencehandler.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;

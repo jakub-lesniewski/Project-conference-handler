@@ -2,7 +2,7 @@ import { useAuth } from "../../utils/auth";
 
 function User() {
   const { user, logout } = useAuth();
-  const { id, name, surname, email_login, affilation } = user;
+  const { id, name, surname, email, affiliation } = user;
   console.log("user logged-user", user);
 
   return (
@@ -11,7 +11,7 @@ function User() {
         <h1>
           Welcome {name} {surname}
         </h1>
-        <h1>Visitor from {affilation}</h1>
+        <h1>Visitor from {affiliation}</h1>
       </header>
       <section>
         <p>Your plan for this conference presents as follows...</p>

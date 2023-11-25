@@ -1,4 +1,4 @@
-package com.FMCSULconferencehandler.model.conference;
+package com.FMCSULconferencehandler.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Entity;

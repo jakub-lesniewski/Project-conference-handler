@@ -8,7 +8,7 @@
       <jdbc-url>jdbc:postgresql://localhost:5432/postgres</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="conf_handler_db@93.105.201.243" uuid="11cf6290-abae-4ee0-a92a-8e3b87de9cdf">
+    <data-source source="LOCAL" name="conf_handler_db" uuid="11cf6290-abae-4ee0-a92a-8e3b87de9cdf">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>

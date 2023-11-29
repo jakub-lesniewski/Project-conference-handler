@@ -11,22 +11,22 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Attendance_Lecture {
+public class Attendee {
     @Id
     @GeneratedValue
     private UUID id;
 
   @ManyToOne
-    @JoinColumn(name="lecture_fk")
-    private Lecture lecture;
+    @JoinColumn(name="event_fk")
+    private Event event;
 
 
     @ManyToOne
     @JoinColumn(name="participant_fk")
     private Participant participant;
 
-    public Attendance_Lecture(Lecture lecture, Participant participant) {
-        this.lecture = lecture;
+    public Attendee(Event event, Participant participant) {
+        this.event = event;
         this.participant = participant;
     }
 }

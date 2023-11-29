@@ -12,13 +12,13 @@ import java.util.*;
 public class ConferenceService {
     private SessionRepository sessionRepository;
     private EventRepository eventRepository;
-    private Attendence_EventRepository attendenceEventRepository;
-    private Attendence_LectureRepository  attendenceLectureRepository;
+    private AttendeeRepository attendenceEventRepository;
+    private LecteurerRepository attendenceLectureRepository;
 
     private ParticipantRepository participantRepository;
     private LectureRepository lectureRepository;
 
-    public ConferenceService(SessionRepository sessionRepository,Attendence_LectureRepository attendenceLectureRepository,LectureRepository lectureRepository, EventRepository eventRepository, Attendence_EventRepository attendenceEventRepository, ParticipantRepository participantRepository) {
+    public ConferenceService(SessionRepository sessionRepository, LecteurerRepository attendenceLectureRepository, LectureRepository lectureRepository, EventRepository eventRepository, AttendeeRepository attendenceEventRepository, ParticipantRepository participantRepository) {
         this.sessionRepository = sessionRepository;
         this.eventRepository = eventRepository;
         this.attendenceEventRepository = attendenceEventRepository;
@@ -48,7 +48,7 @@ public class ConferenceService {
 
         event.setAmount_of_participants(event.getAmount_of_participants()+1);
 
-        Attendance_Event attendanceEvent=new Attendance_Event(event,participant);
+        Attendee attendanceEvent=new Attendee(event,participant);
 
         attendenceEventRepository.save(attendanceEvent);
     }
@@ -112,7 +112,7 @@ public class ConferenceService {
             Participant participant=participantRepository.findById(participant_id2).orElseThrow(() -> new RuntimeException("participant not found"));
             lecture.getEvent().setAmount_of_participants(lecture.getEvent().getAmount_of_participants()+1);
 
-            Attendance_Lecture attendenceLecture=new Attendance_Lecture(lecture,participant);
+            Lecteurer attendenceLecture=new Lecteurer(lecture,participant);
 
             attendenceLectureRepository.save(attendenceLecture);
         }

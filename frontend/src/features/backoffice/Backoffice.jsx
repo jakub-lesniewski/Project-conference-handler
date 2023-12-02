@@ -1,7 +1,6 @@
-import SessionBox from "./SessionBox";
+import SessionBox from "./session/SessionBox";
 import HeaderBox from "./HeaderBox";
 import ConferenceBox from "./ConferenceBox";
-import ModalWindow from "../../ui/ModalWindow";
 
 function Backoffice() {
   return (

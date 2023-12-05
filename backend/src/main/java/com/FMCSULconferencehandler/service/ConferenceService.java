@@ -13,24 +13,38 @@ public class ConferenceService {
     private SessionRepository sessionRepository;
     private EventRepository eventRepository;
     private AttendeeRepository attendenceEventRepository;
-    private LecteurerRepository attendenceLectureRepository;
+    private LecturerRepository attendenceLectureRepository;
 
     private ParticipantRepository participantRepository;
     private LectureRepository lectureRepository;
+    private ConferenceRepository conferenceRepository;
 
-    public ConferenceService(SessionRepository sessionRepository, LecteurerRepository attendenceLectureRepository, LectureRepository lectureRepository, EventRepository eventRepository, AttendeeRepository attendenceEventRepository, ParticipantRepository participantRepository) {
+    public ConferenceService(SessionRepository sessionRepository, ConferenceRepository conferenceRepository,LecturerRepository attendenceLectureRepository, LectureRepository lectureRepository, EventRepository eventRepository, AttendeeRepository attendenceEventRepository, ParticipantRepository participantRepository) {
         this.sessionRepository = sessionRepository;
         this.eventRepository = eventRepository;
         this.attendenceEventRepository = attendenceEventRepository;
         this.participantRepository = participantRepository;
         this.lectureRepository=lectureRepository;
         this.attendenceLectureRepository=attendenceLectureRepository;
+        this.conferenceRepository=conferenceRepository;
     }
 
+    public void addConference(Conference conference)
+    {
+        if(conferenceRepository.findAll().size()==0) {
+            conferenceRepository.save(conference);
+        }
+        else
+        {
+
+            throw new RuntimeException();
+        }
+    }
     public void addSession(Session session)
     {
         sessionRepository.save(session);
     }
+
 
 
     public void addEvent(Event event)
@@ -49,6 +63,7 @@ public class ConferenceService {
         event.setAmount_of_participants(event.getAmount_of_participants()+1);
 
         Attendee attendanceEvent=new Attendee(event,participant);
+        eventRepository.save(event);
 
         attendenceEventRepository.save(attendanceEvent);
     }
@@ -112,7 +127,7 @@ public class ConferenceService {
             Participant participant=participantRepository.findById(participant_id2).orElseThrow(() -> new RuntimeException("participant not found"));
             lecture.getEvent().setAmount_of_participants(lecture.getEvent().getAmount_of_participants()+1);
 
-            Lecteurer attendenceLecture=new Lecteurer(lecture,participant);
+            Lecturer attendenceLecture=new Lecturer(lecture,participant);
 
             attendenceLectureRepository.save(attendenceLecture);
         }
@@ -120,7 +135,10 @@ public class ConferenceService {
     }
     public  HashMap<String,Object> getConference()
     {
+
         HashMap<String, Object> json = new HashMap<>();
+        json.put("CONFERENCE",conferenceRepository.findAll());
+
         for (Session session : sessionRepository.findAll()) {
             json.put("SESSION", session);
             List<Event> events = new ArrayList<>();

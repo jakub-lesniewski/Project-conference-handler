@@ -11,7 +11,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Lecteurer {
+public class Lecturer {
     @Id
     @GeneratedValue
     private UUID id;
@@ -25,7 +25,7 @@ public class Lecteurer {
     @JoinColumn(name="participant_fk")
     private Participant participant;
 
-    public Lecteurer(Lecture lecture, Participant participant) {
+    public Lecturer(Lecture lecture, Participant participant) {
         this.lecture = lecture;
         this.participant = participant;
     }

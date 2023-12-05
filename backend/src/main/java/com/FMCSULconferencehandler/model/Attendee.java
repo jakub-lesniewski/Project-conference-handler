@@ -16,12 +16,12 @@ public class Attendee {
     @GeneratedValue
     private UUID id;
 
-  @ManyToOne
+    @ManyToOne()
     @JoinColumn(name="event_fk")
     private Event event;
 
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name="participant_fk")
     private Participant participant;
 

@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="1e754c9b-275e-4c3a-847d-08e209f4c123" name="Changes" comment="added">
+      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/FMCSULconferencehandler/model/Conference.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/FMCSULconferencehandler/repositories/ConferenceRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/FMCSULconferencehandler/controller/ConferenceController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/FMCSULconferencehandler/controller/ConferenceController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/FMCSULconferencehandler/model/Attendee.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/FMCSULconferencehandler/model/Attendee.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/FMCSULconferencehandler/model/Event.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/FMCSULconferencehandler/model/Event.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/FMCSULconferencehandler/model/Lecteurer.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/FMCSULconferencehandler/model/Lecturer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/FMCSULconferencehandler/model/Participant.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/FMCSULconferencehandler/model/Participant.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/FMCSULconferencehandler/repositories/LecteurerRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/FMCSULconferencehandler/repositories/LecturerRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/FMCSULconferencehandler/service/ConferenceService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/FMCSULconferencehandler/service/ConferenceService.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+        <option value="Interface" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="useMavenConfig" value="true" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectId" id="2XrYoRBYGvaKcT3GP6enukWt2FJ" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "C:/Users/Bartosz Ptaszyński/Desktop/UNIVERSITY/SEMESTR 5/Projekt zespołowy/Project-conference-handler",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "prettierjs.PrettierConfiguration.Package": "C:\\Users\\Bartosz Ptaszyński\\Desktop\\UNIVERSITY\\SEMESTR 5\\Projekt zespołowy\\Project-conference-handler\\frontend\\node_modules\\prettier",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "terminal",
+    "spring.configuration.checksum": "b3eb07992cb63822f239f2db5d20d579",
+    "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "postgresql"
+    ]
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Bartosz Ptaszyński\Desktop\UNIVERSITY\SEMESTR 5\Projekt zespołowy\Project-conference-handler\backend\src\main\resources" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.FMCSULconferencehandler.repositories" />
+      <recent name="com.FMCSULconferencehandler.model.conference" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Spring Boot.FmcsUlConferenceHandlerApplication">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="Project-conference-handler" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="Project-conference-handler" />
+      <option name="filePath" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="FmcsUlConferenceHandlerApplication (1)" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="FMCS-UL-conference-handler" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.FMCSULconferencehandler.FmcsUlConferenceHandlerApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="FmcsUlConferenceHandlerApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="FMCS-UL-conference-handler" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.FMCSULconferencehandler.FmcsUlConferenceHandlerApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="1e754c9b-275e-4c3a-847d-08e209f4c123" name="Changes" comment="" />
+      <created>1699388840042</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1699388840042</updated>
+      <workItem from="1699388841040" duration="1606000" />
+      <workItem from="1699434872033" duration="4668000" />
+      <workItem from="1699480454861" duration="3224000" />
+      <workItem from="1699523545478" duration="2844000" />
+      <workItem from="1699638632452" duration="2079000" />
+      <workItem from="1699708683181" duration="34000" />
+      <workItem from="1699969817197" duration="3367000" />
+      <workItem from="1700210825963" duration="4120000" />
+      <workItem from="1700300598884" duration="9605000" />
+      <workItem from="1700399828798" duration="52000" />
+      <workItem from="1700400576667" duration="1024000" />
+      <workItem from="1700402629511" duration="258000" />
+      <workItem from="1700475042208" duration="19721000" />
+      <workItem from="1700556960473" duration="18000" />
+      <workItem from="1700666869655" duration="260000" />
+      <workItem from="1700685256454" duration="42000" />
+      <workItem from="1700685670058" duration="1029000" />
+      <workItem from="1700758909039" duration="1728000" />
+      <workItem from="1700761497215" duration="808000" />
+      <workItem from="1700940056187" duration="351000" />
+      <workItem from="1701000142096" duration="802000" />
+      <workItem from="1701001234394" duration="1150000" />
+      <workItem from="1701006329628" duration="17000" />
+      <workItem from="1701024353135" duration="1102000" />
+      <workItem from="1701269190522" duration="1748000" />
+      <workItem from="1701274829636" duration="236000" />
+      <workItem from="1701275078220" duration="54000" />
+      <workItem from="1701275151279" duration="203000" />
+      <workItem from="1701275369881" duration="2000000" />
+      <workItem from="1701694667296" duration="9361000" />
+      <workItem from="1701710402758" duration="14000" />
+      <workItem from="1701790747504" duration="4281000" />
+    </task>
+    <task id="LOCAL-00001" summary="added">
+      <created>1700493632739</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1700493632739</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="added" />
+    <option name="LAST_COMMIT_MESSAGE" value="added" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>

@@ -3,14 +3,16 @@ package com.FMCSULconferencehandler.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.*;
 
+import java.util.Set;
 import java.util.UUID;
 
 @Entity(name = "participant")
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+
 @Getter
 @Setter
 public class Participant {
@@ -25,11 +27,62 @@ public class Participant {
     private String affiliation;
     private String password;
 
-/*    public Set<Attendance_Event> getAttendence_event() {
+
+
+    /*    public Set<Attendance_Event> getAttendence_event() {
         return attendence_event;
     }
 
     @OneToMany(mappedBy = "participant")
     private Set<Attendance_Event> attendence_event;*/
+public Participant( String name, String surname, String email_login, String affilation, String password) {
 
+    this.name = name;
+    this.surname = surname;
+    this.email = email_login;
+    this.affiliation = affilation;
+    this.password = password;
+}
+    public UUID getId() {
+        return id;
+    }
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public String getEmail_login() {
+        return email;
+    }
+
+    public void setEmail_login(String email_login) {
+        this.email = email_login;
+    }
+
+    public String getAffilation() {
+        return affiliation;
+    }
+
+    public void setAffilation(String affilation) {
+        this.affiliation = affilation;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

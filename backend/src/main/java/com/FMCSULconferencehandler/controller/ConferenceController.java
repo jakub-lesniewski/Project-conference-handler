@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -19,6 +20,23 @@ public class ConferenceController {
 
     public ConferenceController(ConferenceService conferenceService) {
         this.conferenceService = conferenceService;
+    }
+
+    @PostMapping("/addConference")
+    public ResponseEntity<Object> addConference(@RequestBody Conference conference)
+    {
+
+        try {
+            conferenceService.addConference(conference);
+        }
+        catch (RuntimeException e)
+        {
+            Map<String,String> map=new HashMap<>();
+            map.put("error","conference already exist");
+            return new ResponseEntity<>(map, HttpStatus.FORBIDDEN);
+        }
+
+        return new ResponseEntity<>(conference, HttpStatus.CREATED);
     }
 
     @PostMapping("/addSession")
@@ -37,10 +55,13 @@ public class ConferenceController {
     }
 
     @PostMapping ("/ParticipantToEvent")
-    public ResponseEntity<String> addParticipantToEvent(@RequestBody ParticipantToEventDTO dto)
+    public ResponseEntity<Map> addParticipantToEvent(@RequestBody ParticipantToEventDTO dto)
     {
+        Map<String, String> object = new HashMap<>();
         conferenceService.addParticipantToEvent(dto.getIdEvent(),dto.getIdParticipant());
-        return new ResponseEntity<>("PARTICIPANT ADDED", HttpStatus.OK);
+        object.put("success","participant added");
+
+        return new ResponseEntity<>(object, HttpStatus.OK);
     }
 
 

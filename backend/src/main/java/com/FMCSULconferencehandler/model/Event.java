@@ -1,12 +1,14 @@
 package com.FMCSULconferencehandler.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.mail.Part;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
 
 
@@ -25,6 +27,7 @@ public class Event {
     @JsonFormat(pattern="yyyy-MM-dd HH:mm")
     private LocalDateTime time_end;
     private String name;
+    @Column(name="amount_of_users")
     private int amount_of_participants;
 
     //@ManyToOne
@@ -35,8 +38,6 @@ public class Event {
 //    @JoinColumn(name="type_fk")
 //    private Type type_fk;
 
-   /* @OneToMany(mappedBy = "event")
-    Set<Attendance_Event> event_fk;*/
 
 
     public Event(UUID id, LocalDateTime time_start, LocalDateTime time_end, String name ){
@@ -56,4 +57,5 @@ public class Event {
         this.session_fk=session;
 
     }
+
 }

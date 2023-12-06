@@ -81,7 +81,7 @@ public class AdminController {
 
         }
         response.put("user",p);
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
     private String passwordGenerate()

@@ -6,8 +6,11 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static com.FMCSULconferencehandler.controller.sha.Hashes.hashSHA512;
 
@@ -37,6 +40,20 @@ public class UserService {
             participantRepository.save(user);
         }
 
+    }
+
+    public HashMap<String,Object> getParticipant(UUID id){
+        Participant p=participantRepository.findById(id).orElseThrow(() -> new RuntimeException("participant not found"));
+        HashMap<String,Object> participant=new HashMap<>();
+        participant.put("id",p.getId());
+        participant.put("name",p.getName());
+        participant.put("surname",p.getSurname());
+        participant.put("affilation",p.getAffilation());
+        participant.put("email",p.getEmail());
+
+
+
+        return  participant;
     }
     public Participant getUserByEmail(String email)
     {

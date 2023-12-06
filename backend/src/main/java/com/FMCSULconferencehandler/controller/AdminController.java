@@ -8,9 +8,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.UUID;
 
 import static com.FMCSULconferencehandler.controller.sha.Hashes.hashSHA512;
 
@@ -64,6 +67,23 @@ public class AdminController {
         userService.add(reqUsers);
         return "Added "+ reqUsers.length +" participants";
     }
+
+    @GetMapping("participant/{id}")
+    public ResponseEntity<HashMap<String, Object>> getParticipant(@PathVariable("id") UUID id) {
+        HashMap<String, Object> p;
+        HashMap<String, Object> response = new HashMap();
+        try {
+            p = userService.getParticipant(id);
+
+        } catch (RuntimeException e) {
+            response.put("error", "no participant");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+
+        }
+        response.put("user",p);
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+
+    }
     private String passwordGenerate()
     {
         String password="";
@@ -74,5 +94,7 @@ public class AdminController {
         }
         return password;
     }
-
 }
+
+
+

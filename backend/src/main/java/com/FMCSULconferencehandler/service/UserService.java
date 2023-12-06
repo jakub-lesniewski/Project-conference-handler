@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.FMCSULconferencehandler.controller.sha.Hashes.hashSHA512;
+
 @Service
 @Transactional
 public class UserService {
@@ -30,8 +32,9 @@ public class UserService {
         for(Participant user:usersList)
         {
             users.add(user);
+            // emailService.sendAccountCreationMessage(user);   // Send an e-mail to every newly created user before their password is hashed
+            user.setPassword(hashSHA512(user.getPassword()));
             participantRepository.save(user);
-            // emailService.sendAccountCreationMessage(user);   // Send an e-mail to every newly created user
         }
 
     }

@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+import static com.FMCSULconferencehandler.controller.sha.Hashes.hashSHA512;
+
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
@@ -37,8 +39,8 @@ public class AdminController {
     }
     @PostMapping("/login")
     public ResponseEntity<?> adminLogin(@RequestBody Admin reqAdmin)
-    {
-        Optional<Admin> admin = adminRepository.findByLoginAndPass(reqAdmin.getLogin(), reqAdmin.getPass());
+    {                                                              //ISSUE: need to change the password inside the database to the SHA-512 hash of this
+        Optional<Admin> admin = adminRepository.findByLoginAndPass(reqAdmin.getLogin(), hashSHA512(reqAdmin.getPass()));
         if(admin.isPresent())
         {
             return new ResponseEntity<>(admin.get(), HttpStatus.OK);
@@ -51,6 +53,7 @@ public class AdminController {
     {
         for(Participant reqUser:reqUsers) {
             if (reqUser.getName() != null && reqUser.getSurname() != null && reqUser.getEmail() != null && reqUser.getAffiliation() != null) {
+
                 reqUser.setPassword(passwordGenerate());
             }
             else

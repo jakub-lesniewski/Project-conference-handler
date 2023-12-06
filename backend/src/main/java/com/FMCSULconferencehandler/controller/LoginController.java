@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.FMCSULconferencehandler.controller.sha.Hashes.hashSHA512;
+
 @RestController
 public class LoginController {
     private UserService userService;
@@ -28,7 +30,7 @@ public class LoginController {
             object.put("error", "user not found");
             return new ResponseEntity<>(object, HttpStatus.BAD_REQUEST);
         }
-        else if( reqUser.getPassword().equals(user.getPassword()))
+        else if( hashSHA512(reqUser.getPassword()).equals(user.getPassword()))
         {
             object.put("user",user);
             return new ResponseEntity<>(object, HttpStatus.ACCEPTED);

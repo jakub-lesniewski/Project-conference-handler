@@ -1,14 +1,15 @@
 import { Form, useForm } from "react-hook-form";
 import { emailPattern } from "./helpers";
-import Button from "../../ui/Button";
-import warningIcon from "../../assets/warning-icon.svg";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../utils/auth";
+import Button from "../../ui/Button";
+import warningIcon from "../../assets/warning-icon.svg";
 
 function Login() {
   const [isLoading, setIsLoading] = useState(false);
-  const [serverErrors, setServerErrors] = useState(""); // TODO
   const naviagate = useNavigate();
+  const { login } = useAuth();
 
   const {
     register,
@@ -31,13 +32,12 @@ function Login() {
       onSuccess={async ({ response }) => {
         const data = await response.json();
         const user = data.user;
-
+        login(user);
         naviagate(`/user/${user.id}`);
       }}
       onError={async ({ response }) => {
         const res = await response.json();
-        setServerErrors(res.error);
-        console.log(serverErrors);
+        console.log(res);
       }}
       className="flex flex-col gap-5"
     >

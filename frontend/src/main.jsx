@@ -2,13 +2,14 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./utils/auth";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "./index.css";
 import LandingLayout from "./ui/LandingLayout";
 import ErrorPage from "./ui/ErrorPage";
 import Login from "./features/login/Login";
-import User from "./features/user/User";
+import User, { loader as userLoader } from "./features/user/User";
 import Backoffice from "./features/backoffice/Backoffice";
 import BackofficeLayout from "./features/backoffice/BackofficeLayout";
+import "./index.css";
+import ProtectedRoute from "./utils/ProtectedRoute";
 
 const router = createBrowserRouter([
   {
@@ -20,9 +21,13 @@ const router = createBrowserRouter([
         element: <Login />,
       },
       {
-        path: "/user/:id",
-        element: <User />,
-        isAuthenticated: (user) => user !== null,
+        path: "/user/:userId",
+        element: (
+          <ProtectedRoute>
+            <User />
+          </ProtectedRoute>
+        ),
+        loader: userLoader,
       },
     ],
     errorElement: <ErrorPage />,

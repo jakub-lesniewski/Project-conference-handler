@@ -21,3 +21,14 @@ export async function loginUser(email, password) {
     throw error;
   }
 }
+
+export async function getUser(id) {
+  try {
+    const response = await axios.get(
+      `http://localhost:8080/admin/participant/${id}`,
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}

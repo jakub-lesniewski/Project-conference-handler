@@ -8,18 +8,18 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }) {
-  const [storedUser, setStoredUser] = useLocalStorage("user", null);
+  const [user, setUser] = useLocalStorage("user", null);
 
   function login(userData) {
-    setStoredUser(userData);
+    setUser(userData);
   }
 
   function logout() {
-    setStoredUser(null);
+    setUser(null);
   }
 
   return (
-    <AuthContext.Provider value={{ user: storedUser, login, logout }}>
+    <AuthContext.Provider value={{ user: user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

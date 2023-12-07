@@ -4,7 +4,7 @@ function ModalWindow({ children, onClose }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-brightness-50">
       <div className="relative rounded-md bg-fmcsWhite p-20">
         <button className="absolute right-3 top-3" onClick={handleCloseClick}>
           Close

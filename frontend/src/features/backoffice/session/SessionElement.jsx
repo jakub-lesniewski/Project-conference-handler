@@ -1,15 +1,20 @@
 import { useState } from "react";
 import ModalWindow from "../../../ui/ModalWindow";
-import SessionBuilder from "./SessionBuilder";
+import SessionModal from "./SessionModal";
 
 function SessionElement({ session }) {
+  const [sessionDetails, setSessionDetails] = useState(session);
   const [isModal, setIsModal] = useState(false);
 
   function handleToggleModal() {
     setIsModal(!isModal);
   }
 
-  const { id, name, room, attendees, maxAttendees } = session;
+  function changeSessionDetails(newSessionDetails) {
+    setSessionDetails(newSessionDetails);
+  }
+
+  const { id, name, room, attendees, maxAttendees } = sessionDetails;
 
   return (
     <div className="relative">
@@ -30,7 +35,10 @@ function SessionElement({ session }) {
       </li>
       {isModal && (
         <ModalWindow onClose={handleToggleModal}>
-          <SessionBuilder />
+          <SessionModal
+            sessionDetails={sessionDetails}
+            changeSessionDetails={changeSessionDetails}
+          />
         </ModalWindow>
       )}
     </div>

@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import SquareButton from "../../../ui/SquareButton";
+import Button from "../../../ui/Button";
 
 function EventForm() {
   const dummyData = [
@@ -40,7 +40,7 @@ function EventForm() {
         {...register("type", { required: true })}
         name="type"
         defaultValue="event"
-        className="border-2 p-2 text-lg transition-all duration-300 focus:border-fmcsGreen focus:outline-none focus:ring-fmcsGreen"
+        className="rounded-md border-2 p-2 text-lg transition-all duration-300 focus:border-fmcsGreen focus:outline-none focus:ring-fmcsGreen"
       >
         <option value="event">event</option>
         <option value="lecture">lecture</option>
@@ -85,7 +85,7 @@ function EventForm() {
           </select>
         </>
       )}
-      <SquareButton type="submit">Submit changes</SquareButton>
+      <Button type="submit">Submit changes</Button>
     </form>
   );
 }

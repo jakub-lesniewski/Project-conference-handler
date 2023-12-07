@@ -1,14 +1,8 @@
-import { Outlet, useNavigation } from "react-router-dom";
-import Loader from "./Loader";
+import { Outlet } from "react-router-dom";
 
 function LandingLayout() {
-  const naviagtion = useNavigation();
-  console.log(naviagtion.state);
-  const isLoading = naviagtion.state === "loading";
-
   return (
     <main className="flex min-h-screen items-center justify-center">
-      {isLoading && <Loader />}
       <Outlet />
     </main>
   );

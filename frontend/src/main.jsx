@@ -8,8 +8,8 @@ import Login from "./features/login/Login";
 import User, { loader as userLoader } from "./features/user/User";
 import Backoffice from "./features/backoffice/Backoffice";
 import BackofficeLayout from "./features/backoffice/BackofficeLayout";
-import "./index.css";
 import ProtectedRoute from "./utils/ProtectedRoute";
+import "./index.css";
 
 const router = createBrowserRouter([
   {

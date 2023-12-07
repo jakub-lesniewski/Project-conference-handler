@@ -1,13 +1,11 @@
 import { Form, useForm } from "react-hook-form";
 import { emailPattern } from "./helpers";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../utils/auth";
 import Button from "../../ui/Button";
 import warningIcon from "../../assets/warning-icon.svg";
 
 function Login() {
-  const [isLoading, setIsLoading] = useState(false);
   const naviagate = useNavigate();
   const { login } = useAuth();
 

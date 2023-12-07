@@ -22,13 +22,15 @@ export async function loginUser(email, password) {
   }
 }
 
-export async function getUser(id) {
-  try {
-    const response = await axios.get(
-      `http://localhost:8080/admin/participant/${id}`,
-    );
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+export function getUser(id) {
+  const url = `http://localhost:8080/admin/participant/${id}`;
+
+  return axios
+    .get(url)
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      throw error;
+    });
 }

@@ -3,6 +3,7 @@ package com.FMCSULconferencehandler.controller;
 import com.FMCSULconferencehandler.repositories.AdminRepository;
 import com.FMCSULconferencehandler.model.Admin;
 import com.FMCSULconferencehandler.model.Participant;
+import com.FMCSULconferencehandler.service.AdminService;
 import com.FMCSULconferencehandler.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +22,13 @@ import static com.FMCSULconferencehandler.controller.sha.Hashes.hashSHA512;
 @RequestMapping("/admin")
 public class AdminController {
     private UserService userService;
-    private AdminRepository adminRepository;
-    public  AdminController(UserService userService,AdminRepository adminRepository)
-    {
-        this.userService=userService;
-        this.adminRepository=adminRepository;
-    }
+    private AdminService adminService;
 
+    public  AdminController(UserService userService,AdminService adminService)
+    {
+        this.userService = userService;
+        this.adminService = adminService;
+    }
 
     @GetMapping("/participants")
     public List<Participant> getParticipants()
@@ -37,27 +38,41 @@ public class AdminController {
 
     // Adding a new admin account with generated UUID
     @PostMapping("/admin")
-    public void addAdmin(@RequestBody Admin reqAdmin) {
-        adminRepository.save(reqAdmin);
+    public ResponseEntity<?> addAdmin(@RequestBody Admin reqAdmin) {
+        if(adminService.saveAdmin(reqAdmin))
+            return new ResponseEntity<>(reqAdmin, HttpStatus.CREATED);
+        else
+            return new ResponseEntity<>("invalid username", HttpStatus.CONFLICT);
     }
+
     @PostMapping("/login")
     public ResponseEntity<?> adminLogin(@RequestBody Admin reqAdmin)
     {                                                              //ISSUE: need to change the password inside the database to the SHA-512 hash of this
-        Optional<Admin> admin = adminRepository.findByLoginAndPass(reqAdmin.getLogin(), hashSHA512(reqAdmin.getPass()));
-        if(admin.isPresent())
-        {
-            return new ResponseEntity<>(admin.get(), HttpStatus.OK);
+        //Optional<Admin> admin = adminService.adminRepository.findByLoginAndPass(reqAdmin.getLogin(), hashSHA512(reqAdmin.getPass()));
+        Optional<Admin> admin = adminService.findByLogin(reqAdmin.getLogin());
+        Map<String, Object> object = new HashMap<>();
+
+        if(!admin.isPresent()){
+            object.put("error", "admin not found");
+            return new ResponseEntity<>(object, HttpStatus.UNAUTHORIZED);
         }
-        return new ResponseEntity<>("invalid data", HttpStatus.UNAUTHORIZED);
+        else if(hashSHA512(reqAdmin.getPass()).equals(hashSHA512(admin.get().getPass()))){
+            object.put("admin", admin);
+            return new ResponseEntity<>(object, HttpStatus.OK);
+        }
+        else {
+            object.put("error", "invalid password");
+            return new ResponseEntity<>(object, HttpStatus.CONFLICT);
+        }
     }
 
     @PostMapping("/addUser")
     public String  addUser( @RequestBody Participant... reqUsers)
     {
         for(Participant reqUser:reqUsers) {
-            if (reqUser.getName() != null && reqUser.getSurname() != null && reqUser.getEmail() != null && reqUser.getAffiliation() != null) {
-
-                reqUser.setPassword(passwordGenerate());
+            if (adminService.checkName(reqUser.getName()) && adminService.checkName(reqUser.getSurname())
+                    && adminService.checkMail(reqUser.getEmail())) {
+                reqUser.setPassword(adminService.passwordGenerate());
             }
             else
             {
@@ -83,16 +98,6 @@ public class AdminController {
         response.put("user",p);
         return new ResponseEntity<>(response, HttpStatus.OK);
 
-    }
-    private String passwordGenerate()
-    {
-        String password="";
-        Random random=new Random();
-        for(int i=0;i<8;i++)
-        {
-            password=password+((random.nextInt(10)));
-        }
-        return password;
     }
 }
 

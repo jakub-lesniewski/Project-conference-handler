@@ -1,5 +1,6 @@
 package com.FMCSULconferencehandler.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -16,6 +17,7 @@ import java.util.UUID;
 public class Admin {
     @Id
     @GeneratedValue
+    @Schema(hidden = true)
     private UUID id;
     private String login;
     private String pass;

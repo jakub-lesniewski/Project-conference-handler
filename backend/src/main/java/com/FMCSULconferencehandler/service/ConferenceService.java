@@ -12,26 +12,26 @@ import java.util.*;
 public class ConferenceService {
     private SessionRepository sessionRepository;
     private EventRepository eventRepository;
-    private AttendeeRepository attendenceEventRepository;
-    private LecturerRepository attendenceLectureRepository;
+    private AttendeeRepository attendeeRepository;
+    private LecturerRepository lecturerRepository;
 
     private ParticipantRepository participantRepository;
     private LectureRepository lectureRepository;
     private ConferenceRepository conferenceRepository;
 
-    public ConferenceService(SessionRepository sessionRepository, ConferenceRepository conferenceRepository,LecturerRepository attendenceLectureRepository, LectureRepository lectureRepository, EventRepository eventRepository, AttendeeRepository attendenceEventRepository, ParticipantRepository participantRepository) {
+    public ConferenceService(SessionRepository sessionRepository, ConferenceRepository conferenceRepository, LecturerRepository lecturerRepository, LectureRepository lectureRepository, EventRepository eventRepository, AttendeeRepository attendeeRepository, ParticipantRepository participantRepository) {
         this.sessionRepository = sessionRepository;
         this.eventRepository = eventRepository;
-        this.attendenceEventRepository = attendenceEventRepository;
+        this.attendeeRepository = attendeeRepository;
         this.participantRepository = participantRepository;
         this.lectureRepository=lectureRepository;
-        this.attendenceLectureRepository=attendenceLectureRepository;
+        this.lecturerRepository = lecturerRepository;
         this.conferenceRepository=conferenceRepository;
     }
 
     public void addConference(Conference conference)
     {
-        if(conferenceRepository.findAll().size()==0) {
+        if(conferenceRepository.findAll().isEmpty()) {
             conferenceRepository.save(conference);
         }
         else
@@ -65,11 +65,11 @@ public class ConferenceService {
         Attendee attendanceEvent=new Attendee(event,participant);
         eventRepository.save(event);
 
-        attendenceEventRepository.save(attendanceEvent);
+        attendeeRepository.save(attendanceEvent);
     }
     public List<Event> participantEvent(UUID id)
     {
-        List<Event> eventList = attendenceEventRepository.findByParticipantId(id);
+        List<Event> eventList = attendeeRepository.findByParticipantId(id);
 
         return  eventList;
     }
@@ -110,7 +110,7 @@ public class ConferenceService {
     {
         HashMap<String,Object> json=getLectureById(id).jsonLong();
         List<String> speakerIds = new ArrayList<>();
-        for(Participant p : attendenceLectureRepository.findByLectureId(id))
+        for(Participant p : lecturerRepository.findByLectureId(id))
         {
             speakerIds.add(p.getId().toString());
         }
@@ -129,7 +129,7 @@ public class ConferenceService {
 
             Lecturer attendenceLecture=new Lecturer(lecture,participant);
 
-            attendenceLectureRepository.save(attendenceLecture);
+            lecturerRepository.save(attendenceLecture);
         }
 
     }

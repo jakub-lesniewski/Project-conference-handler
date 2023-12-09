@@ -1,19 +1,14 @@
 package com.FMCSULconferencehandler.controller;
 
-import com.FMCSULconferencehandler.repositories.AdminRepository;
 import com.FMCSULconferencehandler.model.Admin;
 import com.FMCSULconferencehandler.model.Participant;
+import com.FMCSULconferencehandler.repositories.AdminRepository;
 import com.FMCSULconferencehandler.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 import static com.FMCSULconferencehandler.controller.sha.Hashes.hashSHA512;
 
@@ -71,7 +66,7 @@ public class AdminController {
     @GetMapping("participant/{id}")
     public ResponseEntity<HashMap<String, Object>> getParticipant(@PathVariable("id") UUID id) {
         HashMap<String, Object> p;
-        HashMap<String, Object> response = new HashMap();
+        HashMap<String, Object> response = new HashMap<>();
         try {
             p = userService.getParticipant(id);
 
@@ -86,13 +81,13 @@ public class AdminController {
     }
     private String passwordGenerate()
     {
-        String password="";
+        StringBuilder password= new StringBuilder();
         Random random=new Random();
         for(int i=0;i<8;i++)
         {
-            password=password+((random.nextInt(10)));
+            password.append(random.nextInt(10));
         }
-        return password;
+        return password.toString();
     }
 }
 

@@ -48,7 +48,7 @@ public class UserService {
         participant.put("id",p.getId());
         participant.put("name",p.getName());
         participant.put("surname",p.getSurname());
-        participant.put("affilation",p.getAffilation());
+        participant.put("affiliation",p.getAffiliation());
         participant.put("email",p.getEmail());
 
 

@@ -26,4 +26,8 @@ public class Admin {
         this.login = login;
         this.pass = pass;
     }
+
+    public void setPass(String pass){
+            this.pass = pass;
+    }
 }

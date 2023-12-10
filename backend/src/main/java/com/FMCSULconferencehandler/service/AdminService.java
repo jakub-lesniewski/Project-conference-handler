@@ -9,6 +9,8 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.regex.Pattern;
 
+import static com.FMCSULconferencehandler.controller.sha.Hashes.hashSHA512;
+
 @Service
 public class AdminService {
     private AdminRepository adminRepository;
@@ -18,10 +20,16 @@ public class AdminService {
     }
 
     public boolean saveAdmin(Admin reqAdmin) {
-        Optional<Admin> admin = adminRepository.findByLogin(reqAdmin.getLogin());
+        if(!Pattern.compile("\\S{4,}")
+                .matcher(reqAdmin.getLogin())
+                .matches())
+            return false;
 
+        Optional<Admin> admin = adminRepository.findByLogin(reqAdmin.getLogin());
         if(!admin.isPresent()){
+            reqAdmin.setPass(hashSHA512(reqAdmin.getPass()));
             adminRepository.save(reqAdmin);
+
             return true;
         }
         return false;

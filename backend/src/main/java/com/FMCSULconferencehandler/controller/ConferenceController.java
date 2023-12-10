@@ -40,27 +40,32 @@ public class ConferenceController {
     }
 
     @PostMapping("/addSession")
-    public ResponseEntity<Session> addSession(@RequestBody Session session)
+    public ResponseEntity<Object> addSession(@RequestBody Session session)
     {
-        conferenceService.addSession(session);
-        return new ResponseEntity<>(session, HttpStatus.CREATED);
+        if(conferenceService.addSession(session))
+            return new ResponseEntity<>(session, HttpStatus.CREATED);
+        return new ResponseEntity<>("invalid data", HttpStatus.CONFLICT);
     }
 
     @PostMapping("/addEvent")
-    public ResponseEntity<Event> addEvent(@RequestBody Event event)
+    public ResponseEntity<Object> addEvent(@RequestBody Event event)
     {
-        conferenceService.addEvent(event);
-
-        return new ResponseEntity<>(event, HttpStatus.CREATED);
+        if(conferenceService.addEvent(event))
+            return new ResponseEntity<>(event, HttpStatus.CREATED);
+        return new ResponseEntity<>("invalid data", HttpStatus.CONFLICT);
     }
 
     @PostMapping ("/ParticipantToEvent")
     public ResponseEntity<Map> addParticipantToEvent(@RequestBody ParticipantToEventDTO dto)
     {
         Map<String, String> object = new HashMap<>();
-        conferenceService.addParticipantToEvent(dto.getIdEvent(),dto.getIdParticipant());
-        object.put("success","participant added");
-
+        try{
+            conferenceService.addParticipantToEvent(dto.getIdEvent(),dto.getIdParticipant());
+        }catch (RuntimeException e) {
+            object.put("error", e.getClass().getSimpleName());
+            return new ResponseEntity<>(object, HttpStatus.FORBIDDEN);
+        }
+        object.put("success", "participant added");
         return new ResponseEntity<>(object, HttpStatus.OK);
     }
 
@@ -72,23 +77,27 @@ public class ConferenceController {
     }
 
     @GetMapping("/eventInSession/{id}")
-    public ResponseEntity<List<Event>> eventInSession(@PathVariable("id") UUID id)
+    public ResponseEntity<Object> eventInSession(@PathVariable("id") UUID id)//List<Event>
     {
         List<Event> eventList = conferenceService.eventsInSession(id);
-        return new ResponseEntity<>(eventList, HttpStatus.OK);
+        if(eventList != null)
+            return new ResponseEntity<>(eventList, HttpStatus.OK);
+        else
+            return new ResponseEntity<>("no session", HttpStatus.CONFLICT);
     }
 
     @PostMapping("/addLecture")
-    public ResponseEntity<Lecture> addLecture(@RequestBody LectureRequest lecture) {
-
+    public ResponseEntity<Object> addLecture(@RequestBody LectureRequest lecture) {
         Lecture lecture1=conferenceService.addLecture(lecture);
+        if(lecture1 == null)
+            return new ResponseEntity<>("error", HttpStatus.CONFLICT);
         return new ResponseEntity<>(lecture1, HttpStatus.CREATED);
     }
 
     @GetMapping("/getLecture/{id}")
     public ResponseEntity<HashMap<String, Object>> getLecture(@PathVariable("id") UUID id) {
-
-
+        if(conferenceService.getJsonLecture(id).containsKey("error"))
+            return new ResponseEntity<>(conferenceService.getJsonLecture(id), HttpStatus.CONFLICT);
         return new ResponseEntity<>(conferenceService.getJsonLecture(id), HttpStatus.CREATED);
     }
 

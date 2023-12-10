@@ -48,7 +48,6 @@ public class AdminController {
     @PostMapping("/login")
     public ResponseEntity<?> adminLogin(@RequestBody Admin reqAdmin)
     {                                                              //ISSUE: need to change the password inside the database to the SHA-512 hash of this
-        //Optional<Admin> admin = adminService.adminRepository.findByLoginAndPass(reqAdmin.getLogin(), hashSHA512(reqAdmin.getPass()));
         Optional<Admin> admin = adminService.findByLogin(reqAdmin.getLogin());
         Map<String, Object> object = new HashMap<>();
 
@@ -56,7 +55,7 @@ public class AdminController {
             object.put("error", "admin not found");
             return new ResponseEntity<>(object, HttpStatus.UNAUTHORIZED);
         }
-        else if(hashSHA512(reqAdmin.getPass()).equals(hashSHA512(admin.get().getPass()))){
+        else if(hashSHA512(reqAdmin.getPass()).equals(admin.get().getPass())){
             object.put("admin", admin);
             return new ResponseEntity<>(object, HttpStatus.OK);
         }
@@ -67,7 +66,7 @@ public class AdminController {
     }
 
     @PostMapping("/addUser")
-    public String  addUser( @RequestBody Participant... reqUsers)
+    public ResponseEntity<?> addUser( @RequestBody Participant... reqUsers)
     {
         for(Participant reqUser:reqUsers) {
             if (adminService.checkName(reqUser.getName()) && adminService.checkName(reqUser.getSurname())
@@ -76,11 +75,11 @@ public class AdminController {
             }
             else
             {
-                return "error";
+                return new ResponseEntity<>("error", HttpStatus.CONFLICT);
             }
         }
         userService.add(reqUsers);
-        return "Added "+ reqUsers.length +" participants";
+        return new ResponseEntity<>("Added "+ reqUsers.length +" participants", HttpStatus.OK);
     }
 
     @GetMapping("participant/{id}")

@@ -62,7 +62,7 @@ public class ConferenceController {
         try{
             conferenceService.addParticipantToEvent(dto.getIdEvent(),dto.getIdParticipant());
         }catch (RuntimeException e) {
-            object.put("error", e.getClass().getSimpleName());
+            object.put("error", e.getMessage());
             return new ResponseEntity<>(object, HttpStatus.FORBIDDEN);
         }
         object.put("success", "participant added");
@@ -71,8 +71,10 @@ public class ConferenceController {
 
 
     @GetMapping("/attendance/{id}")
-    public ResponseEntity<List<Event>> eventsForParticipants(@PathVariable("id") UUID id)
+    public ResponseEntity<Object> eventsForParticipants(@PathVariable("id") UUID id)
     {
+        if(conferenceService.participantEvent(id) == null)
+            return new ResponseEntity<>("user not found", HttpStatus.CONFLICT);
         return new  ResponseEntity<>(conferenceService.participantEvent(id),HttpStatus.OK);
     }
 

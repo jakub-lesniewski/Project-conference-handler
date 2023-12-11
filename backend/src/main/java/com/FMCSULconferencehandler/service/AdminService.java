@@ -50,7 +50,7 @@ public class AdminService {
         return password;
     }
     public boolean checkName(String name){
-        if(name == null)
+        if(name == null || name.isEmpty())
             return false;
         if(name.charAt(0) < 65 || name.charAt(0) > 90)
             return false;

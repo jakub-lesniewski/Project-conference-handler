@@ -6,6 +6,7 @@ import com.FMCSULconferencehandler.repositories.*;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLOutput;
 import java.util.*;
 
 @Service
@@ -75,6 +76,8 @@ public class ConferenceService {
     }
     public List<Event> participantEvent(UUID id)
     {
+        if(participantRepository.findParticipantById(id) == null)
+            return null;
         List<Event> eventList = attendenceEventRepository.findByParticipantId(id);
 
         return  eventList;
@@ -112,13 +115,11 @@ public class ConferenceService {
         }
 
         eventRepository.save(event);
-
+        lectureRepository.save(lecture1);
         for(UUID id :idSpeakers)
         {
             addSpeakerToLecture(lecture1.getId(),id);
         }
-
-        lectureRepository.save(lecture1);
 
         return lecture1;
     }
@@ -130,13 +131,7 @@ public class ConferenceService {
 
     public HashMap<String,Object>getJsonLecture(UUID id)
     {
-        HashMap<String, Object> json = new HashMap<>();
-        try {
-            json = getLectureById(id).jsonLong();
-        }catch(RuntimeException e){
-            json.put("error", e.getClass().getSimpleName());
-            return json;
-        }
+        HashMap<String,Object> json=getLectureById(id).jsonLong();
         List<String> speakerIds = new ArrayList<>();
         for(Participant p : attendenceLectureRepository.findByLectureId(id))
         {
@@ -184,7 +179,7 @@ public class ConferenceService {
         return json;
     }
 
-    private boolean checkSession(Session session){//<-
+    private boolean checkSession(Session session){
         if(session.getName() == null || session.getName().isEmpty())
             return false;
         if(session.getTime_start() == null)
@@ -192,9 +187,6 @@ public class ConferenceService {
         if(session.getTime_end() == null)
             return false;
         if(session.getTime_start().isAfter(session.getTime_end()))
-            return false;
-        if(!conferenceRepository.findAll().get(1).getDate_start().isAfter(session.getTime_start().toLocalDate())
-        && !conferenceRepository.findAll().get(1).getDate_end().isBefore(session.getTime_end().toLocalDate()))
             return false;
         return true;
     }
@@ -210,12 +202,15 @@ public class ConferenceService {
             return false;
 
         if(event.getSession_fk() != null){
+            if(sessionRepository.findSessionById(event.getSession_fk()) == null)
+                return false;
+
             List<Event> list = new ArrayList<>();
 
             for(Event e : eventRepository.findBySession_fkOrderByTime_startAsc(event.getSession_fk()))
                 if(e.getSession_fk().equals(event.getSession_fk()))
                     list.add(e);
-            //warunek na koncu
+
             if(list.size() == 0 && !sessionRepository.findSessionById(event.getSession_fk()).getTime_start().isAfter(event.getTime_start())
                     && !sessionRepository.findSessionById(event.getSession_fk()).getTime_end().isBefore(event.getTime_end()))
                 return true;

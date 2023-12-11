@@ -131,7 +131,16 @@ public class ConferenceService {
 
     public HashMap<String,Object>getJsonLecture(UUID id)
     {
-        HashMap<String,Object> json=getLectureById(id).jsonLong();
+        //HashMap<String,Object> json=getLectureById(id).jsonLong();
+
+        HashMap<String, Object> json = new HashMap<>();
+        try {
+            json = getLectureById(id).jsonLong();
+        }catch(RuntimeException e){
+            json.put("error", e.getMessage());
+            return json;
+        }
+
         List<String> speakerIds = new ArrayList<>();
         for(Participant p : attendenceLectureRepository.findByLectureId(id))
         {

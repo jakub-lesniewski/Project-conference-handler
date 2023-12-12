@@ -13,5 +13,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
     @Query("SELECT e FROM Event e WHERE e.session_fk = :session_fk")
     List<Event> findBySession_fk(@Param("session_fk") UUID session_fk);
 
+    @Query("select e from Event e where e.session_fk = :session_fk order by e.time_start asc")
+    List<Event> findBySession_fkOrderByTime_startAsc(UUID session_fk);
 
 }

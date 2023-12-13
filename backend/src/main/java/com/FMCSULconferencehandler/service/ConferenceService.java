@@ -6,33 +6,32 @@ import com.FMCSULconferencehandler.repositories.*;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLOutput;
 import java.util.*;
 
 @Service
 public class ConferenceService {
     private SessionRepository sessionRepository;
     private EventRepository eventRepository;
-    private AttendeeRepository attendenceEventRepository;
-    private LecturerRepository attendenceLectureRepository;
+    private AttendeeRepository attendeeRepository;
+    private LecturerRepository lecturerRepository;
 
     private ParticipantRepository participantRepository;
     private LectureRepository lectureRepository;
     private ConferenceRepository conferenceRepository;
 
-    public ConferenceService(SessionRepository sessionRepository, ConferenceRepository conferenceRepository,LecturerRepository attendenceLectureRepository, LectureRepository lectureRepository, EventRepository eventRepository, AttendeeRepository attendenceEventRepository, ParticipantRepository participantRepository) {
+    public ConferenceService(SessionRepository sessionRepository, ConferenceRepository conferenceRepository, LecturerRepository lecturerRepository, LectureRepository lectureRepository, EventRepository eventRepository, AttendeeRepository attendeeRepository, ParticipantRepository participantRepository) {
         this.sessionRepository = sessionRepository;
         this.eventRepository = eventRepository;
-        this.attendenceEventRepository = attendenceEventRepository;
+        this.attendeeRepository = attendeeRepository;
         this.participantRepository = participantRepository;
         this.lectureRepository=lectureRepository;
-        this.attendenceLectureRepository=attendenceLectureRepository;
+        this.lecturerRepository = lecturerRepository;
         this.conferenceRepository=conferenceRepository;
     }
 
     public void addConference(Conference conference)
     {
-        if(conferenceRepository.findAll().size()==0) {
+        if(conferenceRepository.findAll().isEmpty()) {
             conferenceRepository.save(conference);
         }
         else
@@ -49,6 +48,7 @@ public class ConferenceService {
         }
         return false;
     }
+
 
     public boolean addEvent(Event event)
     {
@@ -72,13 +72,13 @@ public class ConferenceService {
         Attendee attendanceEvent=new Attendee(event,participant);
         eventRepository.save(event);
 
-        attendenceEventRepository.save(attendanceEvent);
+        attendeeRepository.save(attendanceEvent);
     }
     public List<Event> participantEvent(UUID id)
     {
         if(participantRepository.findParticipantById(id) == null)
             return null;
-        List<Event> eventList = attendenceEventRepository.findByParticipantId(id);
+        List<Event> eventList = attendeeRepository.findByParticipantId(id);
 
         return  eventList;
     }
@@ -88,12 +88,12 @@ public class ConferenceService {
         if(sessionRepository.findSessionById(id) == null)
             return null;
         List<Event> eventList = eventRepository.findBySession_fk(id);
+
         return  eventList;
     }
     @Transactional
     public Lecture addLecture(LectureRequest lecture)
     {
-
         Event event = new Event(lecture.getTime_start(),lecture.getTime_end()
                 ,lecture.getName(),lecture.getSession_fk());
 
@@ -124,6 +124,7 @@ public class ConferenceService {
         return lecture1;
     }
 
+
     public Lecture getLectureById(UUID id) {
         return lectureRepository.findById(id).orElseThrow(() -> new RuntimeException("lecture not found"));
 
@@ -142,7 +143,7 @@ public class ConferenceService {
         }
 
         List<String> speakerIds = new ArrayList<>();
-        for(Participant p : attendenceLectureRepository.findByLectureId(id))
+        for(Participant p : lecturerRepository.findByLectureId(id))
         {
             speakerIds.add(p.getId().toString());
         }
@@ -159,9 +160,9 @@ public class ConferenceService {
             Participant participant=participantRepository.findById(participant_id2).orElseThrow(() -> new RuntimeException("participant not found"));
             lecture.getEvent().setAmount_of_participants(lecture.getEvent().getAmount_of_participants()+1);
 
-            Lecturer attendenceLecture=new Lecturer(lecture,participant);
+            Lecturer lecturer=new Lecturer(lecture,participant);
 
-            attendenceLectureRepository.save(attendenceLecture);
+            lecturerRepository.save(lecturer);
         }
 
     }

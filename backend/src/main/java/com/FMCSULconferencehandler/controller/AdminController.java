@@ -9,12 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 import static com.FMCSULconferencehandler.controller.sha.Hashes.hashSHA512;
 
@@ -30,6 +25,7 @@ public class AdminController {
         this.adminService = adminService;
     }
 
+
     @GetMapping("/participants")
     public List<Participant> getParticipants()
     {
@@ -44,7 +40,6 @@ public class AdminController {
         else
             return new ResponseEntity<>("invalid username", HttpStatus.CONFLICT);
     }
-
     @PostMapping("/login")
     public ResponseEntity<?> adminLogin(@RequestBody Admin reqAdmin)
     {                                                              //ISSUE: need to change the password inside the database to the SHA-512 hash of this
@@ -85,7 +80,7 @@ public class AdminController {
     @GetMapping("participant/{id}")
     public ResponseEntity<HashMap<String, Object>> getParticipant(@PathVariable("id") UUID id) {
         HashMap<String, Object> p;
-        HashMap<String, Object> response = new HashMap();
+        HashMap<String, Object> response = new HashMap<>();
         try {
             p = userService.getParticipant(id);
 

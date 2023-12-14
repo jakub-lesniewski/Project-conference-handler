@@ -4,30 +4,37 @@ package com.FMCSULconferencehandler.service;
 import com.FMCSULconferencehandler.model.*;
 import com.FMCSULconferencehandler.repositories.*;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLOutput;
 import java.util.*;
 
 @Service
 public class ConferenceService {
     private SessionRepository sessionRepository;
     private EventRepository eventRepository;
-    private AttendeeRepository attendenceEventRepository;
-    private LecturerRepository attendenceLectureRepository;
+    private AttendeeRepository attendeeRepository;
+    private LecturerRepository lecturerRepository;
 
     private ParticipantRepository participantRepository;
     private LectureRepository lectureRepository;
     private ConferenceRepository conferenceRepository;
+    private TypeRepository typeRepository;
+    private TitleRepository titleRepository;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConferenceService.class);
 
-    public ConferenceService(SessionRepository sessionRepository, ConferenceRepository conferenceRepository,LecturerRepository attendenceLectureRepository, LectureRepository lectureRepository, EventRepository eventRepository, AttendeeRepository attendenceEventRepository, ParticipantRepository participantRepository) {
+    public ConferenceService(SessionRepository sessionRepository, ConferenceRepository conferenceRepository, LecturerRepository lecturerRepository, LectureRepository lectureRepository, EventRepository eventRepository, AttendeeRepository attendeeRepository, ParticipantRepository participantRepository, TypeRepository typeRepository, TitleRepository titleRepository) {
         this.sessionRepository = sessionRepository;
         this.eventRepository = eventRepository;
-        this.attendenceEventRepository = attendenceEventRepository;
+        this.attendeeRepository = attendeeRepository;
         this.participantRepository = participantRepository;
         this.lectureRepository=lectureRepository;
-        this.attendenceLectureRepository=attendenceLectureRepository;
+        this.lecturerRepository = lecturerRepository;
         this.conferenceRepository=conferenceRepository;
+        this.typeRepository=typeRepository;
+        this.titleRepository=titleRepository;
     }
 
     public void addConference(Conference conference)
@@ -72,13 +79,13 @@ public class ConferenceService {
         Attendee attendanceEvent=new Attendee(event,participant);
         eventRepository.save(event);
 
-        attendenceEventRepository.save(attendanceEvent);
+        attendeeRepository.save(attendanceEvent);
     }
     public List<Event> participantEvent(UUID id)
     {
         if(participantRepository.findParticipantById(id) == null)
             return null;
-        List<Event> eventList = attendenceEventRepository.findByParticipantId(id);
+        List<Event> eventList = attendeeRepository.findEventByParticipantId(id);
 
         return  eventList;
     }
@@ -142,7 +149,7 @@ public class ConferenceService {
         }
 
         List<String> speakerIds = new ArrayList<>();
-        for(Participant p : attendenceLectureRepository.findByLectureId(id))
+        for(Participant p : lecturerRepository.findByLectureId(id))
         {
             speakerIds.add(p.getId().toString());
         }
@@ -161,7 +168,7 @@ public class ConferenceService {
 
             Lecturer attendenceLecture=new Lecturer(lecture,participant);
 
-            attendenceLectureRepository.save(attendenceLecture);
+            lecturerRepository.save(attendenceLecture);
         }
 
     }
@@ -240,5 +247,223 @@ public class ConferenceService {
             return false;
         }
         return true;
+    }
+
+    // ========== DELETING SECTION ==================
+
+    private UUID convertStringID (String idString) {    // Checks if given ID is correct
+        try {
+            return UUID.fromString(idString);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+
+    public HashMap<String, Object> deleteType (String idString) {
+
+        HashMap<String, Object> json = new HashMap<>();
+
+        UUID id = convertStringID(idString);
+        if (id == null) {
+            json.put("error", "invalid UUID format for typeID: " + idString);
+            return json;
+            //return "Invalid UUID format for typeID: " + idString;
+        }
+        Optional<Type> type = typeRepository.findById(id);
+        if (type.isEmpty()) {
+            json.put("error", "type not found");
+            //return "Type not found";
+        } else {
+            typeRepository.deleteById(id);
+            json.put("success", "type deleted");
+            //return "Type deleted";
+        }
+
+        return json;
+    }
+
+    public HashMap<String, Object> deleteTitle(String idString) {
+
+        HashMap<String, Object> json = new HashMap<>();
+        UUID id = convertStringID(idString);
+
+        if (id == null) {
+            json.put("error", "Invalid UUID format for titleID: " + idString);
+        } else {
+            Optional<Title> title = titleRepository.findById(id);
+            if (title.isEmpty()) {
+                json.put("error", "Title not found");
+            } else {
+                titleRepository.deleteById(id);
+                json.put("success", "Title deleted");
+            }
+        }
+
+        return json;
+    }
+
+    public HashMap<String, Object> deleteAttendeeByEventAndParticipant(String idEvent, String idParticipant) {
+        HashMap<String, Object> json = new HashMap<>();
+
+        // Convert String IDs to UUID
+        UUID eventID = convertStringID(idEvent);
+        UUID participantID = convertStringID(idParticipant);
+
+        // Check ID validity
+        if (eventID == null) {
+            json.put("error", "Invalid UUID format for eventID: " + idEvent);
+        } else if (participantID == null) {
+            json.put("error", "Invalid UUID format for participantID: " + idParticipant);
+        } else {
+            // Find a record in the database
+            Optional<Attendee> attendee = attendeeRepository.findAttendeeByEventAndParticipant(eventID, participantID);
+
+            if (attendee.isEmpty()) {
+                json.put("error", "Attendee not found");
+            } else {
+                UUID id = attendee.get().getId();
+                attendeeRepository.deleteById(id);
+                json.put("success", "Attendee deleted");
+            }
+        }
+
+        return json;
+    }
+
+
+    public HashMap<String, Object> deleteAttendeesByParticipant(String idString) {
+
+        HashMap<String, Object> json = new HashMap<>();
+        UUID id = convertStringID(idString);
+
+        if (id == null) {
+            json.put("error", "Invalid UUID format for participantID: " + idString);
+        } else {
+            List<Attendee> attendees = attendeeRepository.findAttendeesByParticipantId(id);
+            if (attendees.isEmpty()) {
+                json.put("info", "No attendee records found for this participant");
+            } else {
+                for (Attendee attendee : attendees) {
+                    attendeeRepository.deleteById(attendee.getId());
+                }
+                json.put("success", "Attendee records for participantID: " + idString + " deleted");
+            }
+        }
+
+        return json;
+    }
+
+    public HashMap<String, Object> deleteAttendeesByEvent(String idString) {
+        HashMap<String, Object> json = new HashMap<>();
+
+        UUID id = convertStringID(idString);
+        if (id == null) {
+            json.put("error", "Invalid UUID format for eventID: " + idString);
+        } else {
+            List<Attendee> attendees = attendeeRepository.findAttendeesByEventId(id);
+
+            if (attendees.isEmpty()) {
+                json.put("info", "No attendee records found for this event");
+            } else {
+                for (Attendee attendee : attendees) {
+                    attendeeRepository.deleteById(attendee.getId());
+                }
+                json.put("success", "Attendee records for eventID: " + idString + " deleted");
+            }
+        }
+
+        return json;
+    }
+
+    public HashMap<String, Object> deleteLecturerByLectureAndParticipant(String idLectureString, String idParticipantString) {
+        HashMap<String, Object> json = new HashMap<>();
+
+        // Convert String IDs to UUID
+        UUID idLecture = convertStringID(idLectureString);
+        UUID idParticipant = convertStringID(idParticipantString);
+
+        // Check ID validity
+        if (idLecture == null) {
+            json.put("error", "Invalid UUID format for lectureID: " + idLectureString);
+        } else if (idParticipant == null) {
+            json.put("error", "Invalid UUID format for participantID: " + idParticipantString);
+        } else {
+            // Find a record in the database
+            Optional<Lecturer> lecturer = lecturerRepository.findLecturerByLectureAndParticipant(idLecture, idParticipant);
+
+            if (lecturer.isEmpty()) {
+                json.put("error", "Lecturer not found");
+            } else {
+                UUID id = lecturer.get().getId();
+                lecturerRepository.deleteById(id);
+                json.put("success", "Lecturer deleted");
+            }
+        }
+
+        return json;
+    }
+
+    public HashMap<String, Object> deleteLecturersByParticipant(String idString) {
+        HashMap<String, Object> json = new HashMap<>();
+
+        UUID id = convertStringID(idString);
+        if (id == null) {
+            json.put("error", "Invalid UUID format for participantID: " + idString);
+        } else {
+            List<Lecturer> lecturers = lecturerRepository.findLecturersByParticipant(id);
+
+            if (lecturers.isEmpty()) {
+                json.put("info", "No attendee records found for this participant");
+            } else {
+                for (Lecturer lecturer : lecturers) {
+                    lecturerRepository.deleteById(lecturer.getId());
+                }
+                json.put("success", "Lecturer records for participantID: " + idString + " deleted");
+            }
+        }
+
+        return json;
+    }
+
+    public HashMap<String, Object> deleteLecturersByLecture(String idString) {
+        HashMap<String, Object> json = new HashMap<>();
+
+        UUID id = convertStringID(idString);
+        if (id == null) {
+            json.put("error", "Invalid UUID format for lectureID: " + idString);
+        } else {
+            List<Lecturer> lecturers = lecturerRepository.findLecturersByLecture(id);
+
+            if (lecturers.isEmpty()) {
+                json.put("info", "No attendee records found for this participant");
+            } else {
+                for (Lecturer lecturer : lecturers) {
+                    lecturerRepository.deleteById(lecturer.getId());
+                }
+                json.put("success", "Lecturer records for lectureID: " + idString + " deleted");
+            }
+        }
+
+        return json;
+    }
+
+    public HashMap<String, Object> deleteLecture(String idString) {
+        HashMap<String, Object> json = new HashMap<>();
+
+        UUID id = convertStringID(idString);
+        if (id == null) {
+            json.put("error", "Invalid UUID format for lectureID: " + idString);
+        } else {
+            Optional<Lecture> lecture = lectureRepository.findById(id);
+            if (lecture.isEmpty()) {
+                json.put("error", "Lecture not found");
+            } else {
+                deleteLecturersByLecture(idString);
+                lectureRepository.deleteById(id);
+                json.put("success", "Lecture deleted");
+            }
+        }
+
+        return json;
     }
 }

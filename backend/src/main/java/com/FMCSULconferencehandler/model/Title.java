@@ -13,14 +13,14 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Type {
+public class Title {
     @Id
     @GeneratedValue
     private UUID id;
     private String name;
     private String abbreviation;
 
-    public Type(UUID id, String name, String abbreviation) {
+    public Title(UUID id, String name, String abbreviation) {
         this.id = id;
         this.name = name;
         this.abbreviation = abbreviation;
@@ -29,5 +29,3 @@ public class Type {
 
 
 }
-
-

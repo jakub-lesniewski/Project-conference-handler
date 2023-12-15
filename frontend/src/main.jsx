@@ -1,5 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./utils/auth";
+import { BackofficeProvider } from "./features/backoffice/BackofficeProvider";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import LandingLayout from "./ui/LandingLayout";
@@ -35,7 +36,11 @@ const router = createBrowserRouter([
 
   {
     path: "/backoffice",
-    element: <BackofficeLayout />,
+    element: (
+      <BackofficeProvider>
+        <BackofficeLayout />
+      </BackofficeProvider>
+    ),
     errorElement: <ErrorPage />,
     children: [
       {

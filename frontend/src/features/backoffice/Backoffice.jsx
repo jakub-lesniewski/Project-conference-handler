@@ -1,14 +1,12 @@
-import SessionBox from "./session/SessionBox";
-import HeaderBox from "./HeaderBox";
-import ConferenceBox from "./ConferenceBox";
+import AtendeesBox from "./AtendeesBox";
+import SessionBox from "./SessionBox";
 
 function Backoffice() {
   return (
-    <div className="mt-20 grid h-min w-1/2 grid-cols-2 border">
-      <HeaderBox />
-      <ConferenceBox />
+    <main className="gap- m-10 grid grid-cols-2 gap-x-5">
       <SessionBox />
-    </div>
+      <AtendeesBox />
+    </main>
   );
 }
 

@@ -1,16 +1,16 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./utils/auth";
-import { BackofficeProvider } from "./features/backoffice/BackofficeProvider";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import LandingLayout from "./ui/LandingLayout";
+import LandingLayout from "./features/login/LandingLayout";
+import Backoffice from "./features/backoffice/Backoffice";
 import ErrorPage from "./ui/ErrorPage";
 import Login from "./features/login/Login";
 import User, { loader as userLoader } from "./features/user/User";
-import Backoffice from "./features/backoffice/Backoffice";
-import BackofficeLayout from "./features/backoffice/BackofficeLayout";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import "./index.css";
+import SessionBox from "./features/backoffice/SessionBox";
+import AtendeesBox from "./features/backoffice/AtendeesBox";
 
 const router = createBrowserRouter([
   {
@@ -33,21 +33,10 @@ const router = createBrowserRouter([
     ],
     errorElement: <ErrorPage />,
   },
-
   {
     path: "/backoffice",
-    element: (
-      <BackofficeProvider>
-        <BackofficeLayout />
-      </BackofficeProvider>
-    ),
+    element: <Backoffice />,
     errorElement: <ErrorPage />,
-    children: [
-      {
-        path: "/backoffice",
-        element: <Backoffice />,
-      },
-    ],
   },
 ]);
 

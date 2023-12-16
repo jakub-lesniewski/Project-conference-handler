@@ -3,6 +3,7 @@ package com.FMCSULconferencehandler.service;
 
 import com.FMCSULconferencehandler.model.*;
 import com.FMCSULconferencehandler.repositories.*;
+import jakarta.mail.Part;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ConferenceService {
@@ -71,8 +73,8 @@ public class ConferenceService {
 
     public void addParticipantToEvent( UUID event_ID,UUID participant_id)
     {
-        Event event = eventRepository.findById(event_ID).orElseThrow(() -> new RuntimeException("Event not found"));
-        Participant participant=participantRepository.findById(participant_id).orElseThrow(() -> new RuntimeException("participant not found"));
+        Event event = eventRepository.findById(event_ID).orElseThrow(() -> new EmptyResultDataAccessException("Event not found", 1));
+        Participant participant=participantRepository.findById(participant_id).orElseThrow(() -> new EmptyResultDataAccessException("participant not found", 1));
 
         event.setAmount_of_participants(event.getAmount_of_participants()+1);
 
@@ -131,28 +133,24 @@ public class ConferenceService {
         return lecture1;
     }
 
-    public Lecture getLectureById(UUID id) {
-        return lectureRepository.findById(id).orElseThrow(() -> new RuntimeException("lecture not found"));
-
-    }
-
-    public HashMap<String,Object>getJsonLecture(UUID id)
+    public Map<String,Object>getJsonLecture(UUID id)
     {
-        //HashMap<String,Object> json=getLectureById(id).jsonLong();
+        Map<String, Object> json = lectureRepository.findById(id)
+                .orElseThrow(() -> new EmptyResultDataAccessException("lecture not found", 1))
+                .jsonLong();
 
-        HashMap<String, Object> json = new HashMap<>();
-        try {
-            json = getLectureById(id).jsonLong();
-        }catch(RuntimeException e){
-            json.put("error", e.getMessage());
-            return json;
-        }
+        List<String> speakerIds = lecturerRepository.findByLectureId(id).stream()
+                .map(Participant::getId)
+                .map(UUID::toString)
+                .toList();
 
-        List<String> speakerIds = new ArrayList<>();
-        for(Participant p : lecturerRepository.findByLectureId(id))
-        {
-            speakerIds.add(p.getId().toString());
-        }
+        // Old 15 years ago
+//        List<String> speakerIds = new ArrayList<>();
+//        for(Participant p : lecturerRepository.findByLectureId(id))
+//        {
+//            speakerIds.add(p.getId().toString());
+//        }
+
         json.put("speaker",speakerIds);
         return json;
     }
@@ -166,9 +164,9 @@ public class ConferenceService {
             Participant participant=participantRepository.findById(participant_id2).orElseThrow(() -> new RuntimeException("participant not found"));
             lecture.getEvent().setAmount_of_participants(lecture.getEvent().getAmount_of_participants()+1);
 
-            Lecturer attendenceLecture=new Lecturer(lecture,participant);
+            Lecturer attendanceLecture=new Lecturer(lecture,participant);
 
-            lecturerRepository.save(attendenceLecture);
+            lecturerRepository.save(attendanceLecture);
         }
 
     }

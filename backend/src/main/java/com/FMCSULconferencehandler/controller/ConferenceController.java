@@ -52,16 +52,12 @@ public class ConferenceController {
         return new ResponseEntity<>("invalid data", HttpStatus.CONFLICT);
     }
 
-    @PostMapping ("/ParticipantToEvent")
-    public ResponseEntity<Map> addParticipantToEvent(@RequestBody ParticipantToEventDTO dto)
+    @PostMapping ("/participantToEvent")
+    public ResponseEntity<Map<String, String>> addParticipantToEvent(@RequestBody ParticipantToEventDTO dto)
     {
         Map<String, String> object = new HashMap<>();
-        try{
-            conferenceService.addParticipantToEvent(dto.getIdEvent(),dto.getIdParticipant());
-        }catch (RuntimeException e) {
-            object.put("error", e.getMessage());
-            return new ResponseEntity<>(object, HttpStatus.FORBIDDEN);
-        }
+        conferenceService.addParticipantToEvent(dto.getIdEvent(),dto.getIdParticipant());
+
         object.put("success", "participant added");
         return new ResponseEntity<>(object, HttpStatus.OK);
     }
@@ -94,7 +90,7 @@ public class ConferenceController {
     }
 
     @GetMapping("/getLecture/{id}")
-    public ResponseEntity<HashMap<String, Object>> getLecture(@PathVariable("id") UUID id) {
+    public ResponseEntity<Map<String, Object>> getLecture(@PathVariable("id") UUID id) {
         if(conferenceService.getJsonLecture(id).containsKey("error"))
             return new ResponseEntity<>(conferenceService.getJsonLecture(id), HttpStatus.CONFLICT);
         return new ResponseEntity<>(conferenceService.getJsonLecture(id), HttpStatus.CREATED);

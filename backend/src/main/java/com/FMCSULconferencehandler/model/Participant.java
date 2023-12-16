@@ -70,12 +70,12 @@ public Participant( String name, String surname, String email_login, String affi
         this.email = email_login;
     }
 
-    public String getAffilation() {
+    public String getAffiliation() {
         return affiliation;
     }
 
-    public void setAffilation(String affilation) {
-        this.affiliation = affilation;
+    public void setAffiliation(String affiliation) {
+        this.affiliation = affiliation;
     }
 
     public String getPassword() {

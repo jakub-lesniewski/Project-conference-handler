@@ -41,7 +41,7 @@ public class ConferenceService {
 
     public void addConference(Conference conference)
     {
-        if(conferenceRepository.findAll().size()==0) {
+        if(conferenceRepository.findAll().isEmpty()) {
             conferenceRepository.save(conference);
         }
         else
@@ -102,7 +102,6 @@ public class ConferenceService {
     @Transactional
     public Lecture addLecture(LectureRequest lecture)
     {
-
         Event event = new Event(lecture.getTime_start(),lecture.getTime_end()
                 ,lecture.getName(),lecture.getSession_fk());
 
@@ -144,13 +143,6 @@ public class ConferenceService {
                 .map(UUID::toString)
                 .toList();
 
-        // Old 15 years ago
-//        List<String> speakerIds = new ArrayList<>();
-//        for(Participant p : lecturerRepository.findByLectureId(id))
-//        {
-//            speakerIds.add(p.getId().toString());
-//        }
-
         json.put("speaker",speakerIds);
         return json;
     }
@@ -164,9 +156,9 @@ public class ConferenceService {
             Participant participant=participantRepository.findById(participant_id2).orElseThrow(() -> new RuntimeException("participant not found"));
             lecture.getEvent().setAmount_of_participants(lecture.getEvent().getAmount_of_participants()+1);
 
-            Lecturer attendanceLecture=new Lecturer(lecture,participant);
+            Lecturer lecturer=new Lecturer(lecture,participant);
 
-            lecturerRepository.save(attendanceLecture);
+            lecturerRepository.save(lecturer);
         }
 
     }

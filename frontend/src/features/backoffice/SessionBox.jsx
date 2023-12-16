@@ -59,8 +59,8 @@ function SessionBox() {
                 key={item.id}
                 className="hover:bg-fmcsGray cursor-pointer border-b text-sm transition-all duration-200"
               >
-                <td className="text-center">{item.id}</td>
-                <td className="p-3 text-center">{item.name}</td>
+                <td className="p-3 text-center">{item.id}</td>
+                <td className="text-center">{item.name}</td>
                 <td className="text-center">{item.room_number}</td>
                 <td className="text-center">{item.time_start}</td>
                 <td className="text-center">{item.time_end}</td>

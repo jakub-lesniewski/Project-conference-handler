@@ -9,8 +9,6 @@ import Login from "./features/login/Login";
 import User, { loader as userLoader } from "./features/user/User";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import "./index.css";
-import SessionBox from "./features/backoffice/SessionBox";
-import AtendeesBox from "./features/backoffice/AtendeesBox";
 
 const router = createBrowserRouter([
   {

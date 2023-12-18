@@ -1,4 +1,7 @@
 import { useState } from "react";
+import RowSession from "./RowSession";
+import ModalWindow from "../../../ui/ModalWindow";
+import ModalSession from "./ModalSession";
 
 const tableHeadRow = [
   "id",
@@ -14,6 +17,8 @@ const tableHeadRow = [
 function SessionBox() {
   const [sessionsArr, setSessionsArr] = useState([]);
   const [sessionId, setSessionId] = useState(1);
+  const [showModal, setShowModal] = useState(false);
+  const [currentSession, setCurrentSession] = useState(null);
 
   function addSession() {
     setSessionId((prevSessionId) => prevSessionId + 1);
@@ -38,10 +43,14 @@ function SessionBox() {
     );
   }
 
+  function toggleModal() {
+    setShowModal(!showModal);
+  }
+
   return (
     <section>
-      <div className="w-full overflow-auto border-2 shadow-md sm:rounded-lg">
-        <table className="w-full text-left rtl:text-right">
+      <div className="h-[900px] w-full overflow-auto border-2 shadow-md sm:rounded-lg">
+        <table className=" w-full text-left rtl:text-right">
           <thead className="border-b text-xs uppercase">
             <tr>
               {tableHeadRow.map((item, index) => (
@@ -54,28 +63,14 @@ function SessionBox() {
           </thead>
 
           <tbody>
-            {sessionsArr.map((item) => (
-              <tr
-                key={item.id}
-                className="hover:bg-fmcsGray cursor-pointer border-b text-sm transition-all duration-200"
-              >
-                <td className="p-3 text-center">{item.id}</td>
-                <td className="text-center">{item.name}</td>
-                <td className="text-center">{item.room_number}</td>
-                <td className="text-center">{item.time_start}</td>
-                <td className="text-center">{item.time_end}</td>
-                <td className="text-center">{item.city}</td>
-                <td className="text-center">{item.street}</td>
-                <td className="text-center">{item.building}</td>
-                <td className="relative w-24 text-center">
-                  <button
-                    onClick={() => removeSession(item.id)}
-                    className="absolute inset-0 h-full w-24 overflow-hidden px-4 py-2 transition-all duration-200 hover:bg-fmcsRed hover:text-fmcsWhite"
-                  >
-                    remove
-                  </button>
-                </td>
-              </tr>
+            {sessionsArr.map((session) => (
+              <RowSession
+                session={session}
+                removeSession={removeSession}
+                setCurrentSession={setCurrentSession}
+                onClick={toggleModal}
+                key={session.id}
+              />
             ))}
           </tbody>
         </table>
@@ -87,6 +82,11 @@ function SessionBox() {
           add session
         </button>
       </div>
+      {showModal && (
+        <ModalWindow onClose={toggleModal}>
+          <ModalSession session={currentSession} toggleModal={toggleModal} />
+        </ModalWindow>
+      )}
     </section>
   );
 }

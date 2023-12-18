@@ -1,5 +1,5 @@
 import AtendeesBox from "./AtendeesBox";
-import SessionBox from "./SessionBox";
+import SessionBox from "./sessions/SessionBox";
 
 function Backoffice() {
   return (

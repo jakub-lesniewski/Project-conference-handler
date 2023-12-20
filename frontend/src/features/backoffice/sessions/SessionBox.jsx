@@ -49,7 +49,7 @@ function SessionBox() {
 
   return (
     <section>
-      <div className="h-[900px] w-full overflow-auto border-2 shadow-md sm:rounded-lg">
+      <div className="max-h-[800px] w-full overflow-auto border-2 shadow-md sm:rounded-lg">
         <table className=" w-full text-left rtl:text-right">
           <thead className="border-b text-xs uppercase">
             <tr>

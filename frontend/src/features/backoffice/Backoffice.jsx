@@ -1,9 +1,9 @@
-import AtendeesBox from "./AtendeesBox";
+import AtendeesBox from "./atendees/AtendeesBox";
 import SessionBox from "./sessions/SessionBox";
 
 function Backoffice() {
   return (
-    <main className="gap- m-10 grid grid-cols-2 gap-x-5">
+    <main className="m-10 grid grid-cols-2 gap-x-5">
       <SessionBox />
       <AtendeesBox />
     </main>

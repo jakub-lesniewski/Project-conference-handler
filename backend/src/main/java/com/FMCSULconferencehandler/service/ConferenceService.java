@@ -3,28 +3,27 @@ package com.FMCSULconferencehandler.service;
 
 import com.FMCSULconferencehandler.model.*;
 import com.FMCSULconferencehandler.repositories.*;
-import jakarta.mail.Part;
-import jakarta.transaction.Transactional;
+import com.fasterxml.jackson.databind.introspect.TypeResolutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class ConferenceService {
-    private SessionRepository sessionRepository;
-    private EventRepository eventRepository;
-    private AttendeeRepository attendeeRepository;
-    private LecturerRepository lecturerRepository;
-
-    private ParticipantRepository participantRepository;
-    private LectureRepository lectureRepository;
-    private ConferenceRepository conferenceRepository;
-    private TypeRepository typeRepository;
-    private TitleRepository titleRepository;
+    private final SessionRepository sessionRepository;
+    private final EventRepository eventRepository;
+    private final AttendeeRepository attendeeRepository;
+    private final LecturerRepository lecturerRepository;
+    private final ParticipantRepository participantRepository;
+    private final LectureRepository lectureRepository;
+    private final ConferenceRepository conferenceRepository;
+    private final TypeRepository typeRepository;
+    private final TitleRepository titleRepository;
     private static final Logger LOGGER = LoggerFactory.getLogger(ConferenceService.class);
 
     public ConferenceService(SessionRepository sessionRepository, ConferenceRepository conferenceRepository, LecturerRepository lecturerRepository, LectureRepository lectureRepository, EventRepository eventRepository, AttendeeRepository attendeeRepository, ParticipantRepository participantRepository, TypeRepository typeRepository, TitleRepository titleRepository) {
@@ -87,17 +86,15 @@ public class ConferenceService {
     {
         if(participantRepository.findParticipantById(id) == null)
             return null;
-        List<Event> eventList = attendeeRepository.findEventByParticipantId(id);
 
-        return  eventList;
+        return attendeeRepository.findEventByParticipantId(id);
     }
 
     public List<Event> eventsInSession(UUID id)
     {
         if(sessionRepository.findSessionById(id) == null)
             return null;
-        List<Event> eventList = eventRepository.findBySession_fk(id);
-        return  eventList;
+        return eventRepository.findBySessionFk(id);
     }
     @Transactional
     public Lecture addLecture(LectureRequest lecture)
@@ -173,7 +170,7 @@ public class ConferenceService {
             List<Event> events = new ArrayList<>();
             List<Map<String, Object>> lecturesData = new ArrayList<>();
 
-            for (Event e : eventRepository.findBySession_fk(session.getId())) {
+            for (Event e : eventRepository.findBySessionFk(session.getId())) {
                 for (Lecture l : lectureRepository.findByEvent_fk(e.getId())) {
                     lecturesData.add(getJsonLecture(l.getId()));
                 }
@@ -207,27 +204,27 @@ public class ConferenceService {
         if(event.getTime_start().isAfter(event.getTime_end()))
             return false;
 
-        if(event.getSession_fk() != null){
-            if(sessionRepository.findSessionById(event.getSession_fk()) == null)
+        if(event.getSessionFk() != null){
+            if(sessionRepository.findSessionById(event.getSessionFk()) == null)
                 return false;
 
             List<Event> list = new ArrayList<>();
 
-            for(Event e : eventRepository.findBySession_fkOrderByTime_startAsc(event.getSession_fk()))
-                if(e.getSession_fk().equals(event.getSession_fk()))
+            for(Event e : eventRepository.findBySessionFkOrderByTime_startAsc(event.getSessionFk()))
+                if(e.getSessionFk().equals(event.getSessionFk()))
                     list.add(e);
 
-            if(list.size() == 0 && !sessionRepository.findSessionById(event.getSession_fk()).getTime_start().isAfter(event.getTime_start())
-                    && !sessionRepository.findSessionById(event.getSession_fk()).getTime_end().isBefore(event.getTime_end()))
+            if(list.isEmpty() && !sessionRepository.findSessionById(event.getSessionFk()).getTime_start().isAfter(event.getTime_start())
+                    && !sessionRepository.findSessionById(event.getSessionFk()).getTime_end().isBefore(event.getTime_end()))
                 return true;
             if(!list.get(0).getTime_start().isBefore(event.getTime_end()) &&
                     !sessionRepository.findSessionById(
-                            event.getSession_fk())
+                            event.getSessionFk())
                             .getTime_start()
                             .isAfter(event.getTime_start()))
                 return true;
             if(!(list.get(list.size() - 1).getTime_end().isAfter(event.getTime_start()))
-            && !sessionRepository.findSessionById(event.getSession_fk()).getTime_end().isBefore(event.getTime_end()))
+            && !sessionRepository.findSessionById(event.getSessionFk()).getTime_end().isBefore(event.getTime_end()))
                 return true;
             for(int i = 0; i < list.size(); i++){
                 if(!list.get(i).getTime_end().isAfter(event.getTime_start()) &&
@@ -239,221 +236,216 @@ public class ConferenceService {
         return true;
     }
 
-    // ========== DELETING SECTION ==================
+    public void deleteType (UUID id) {
 
-    private UUID convertStringID (String idString) {    // Checks if given ID is correct
+        if(!typeRepository.existsById(id)) {
+            throw new EmptyResultDataAccessException("Type not found", 1);
+        }
+
         try {
-            return UUID.fromString(idString);
-        } catch (IllegalArgumentException e) {
-            return null;
-        }
-    }
-
-    public HashMap<String, Object> deleteType (String idString) {
-
-        HashMap<String, Object> json = new HashMap<>();
-
-        UUID id = convertStringID(idString);
-        if (id == null) {
-            json.put("error", "invalid UUID format for typeID: " + idString);
-            return json;
-            //return "Invalid UUID format for typeID: " + idString;
-        }
-        Optional<Type> type = typeRepository.findById(id);
-        if (type.isEmpty()) {
-            json.put("error", "type not found");
-            //return "Type not found";
-        } else {
             typeRepository.deleteById(id);
-            json.put("success", "type deleted");
-            //return "Type deleted";
+        } catch (DataIntegrityViolationException ex) {
+            throw new DataIntegrityViolationException("Could not delete type, data integrity violated");
         }
-
-        return json;
     }
 
-    public HashMap<String, Object> deleteTitle(String idString) {
+    public void deleteTitle(UUID id) {
 
-        HashMap<String, Object> json = new HashMap<>();
-        UUID id = convertStringID(idString);
+        if (!titleRepository.existsById(id)) {
+            throw new EmptyResultDataAccessException("Title not found", 1);
+        }
 
-        if (id == null) {
-            json.put("error", "Invalid UUID format for titleID: " + idString);
-        } else {
-            Optional<Title> title = titleRepository.findById(id);
-            if (title.isEmpty()) {
-                json.put("error", "Title not found");
-            } else {
-                titleRepository.deleteById(id);
-                json.put("success", "Title deleted");
+        try {
+            titleRepository.deleteById(id);
+        } catch (DataIntegrityViolationException ex) {
+            throw new DataIntegrityViolationException("Could not delete title, data integrity violated");
+        }
+    }
+
+    public void deleteAttendeeByEventAndParticipant(UUID idEvent, UUID idParticipant) {
+
+        Attendee attendee = attendeeRepository.findAttendeeByEventAndParticipant(idEvent, idParticipant).
+                orElseThrow(() -> new EmptyResultDataAccessException("Attendee not found", 1));
+
+        attendeeRepository.deleteById(attendee.getId());
+    }
+
+    @Transactional
+    public Long deleteAttendeesByParticipant(UUID id) {
+
+        if(!participantRepository.existsById(id)) {
+            throw new EmptyResultDataAccessException("Participant not found", 1);
+        }
+        Long numOfDeleted = 0L;
+
+        if (attendeeRepository.existsByParticipantId(id)) {
+            numOfDeleted = attendeeRepository.deleteByParticipantId(id);
+        }
+        return numOfDeleted;
+    }
+
+    @Transactional
+    public Long deleteAttendeesByEvent(UUID id) {
+
+        if(!eventRepository.existsById(id)) {
+            throw new EmptyResultDataAccessException("Event not found", 1);
+        }
+        Long numOfDeleted = 0L;
+
+        if (attendeeRepository.existsByEventId(id)) {
+            numOfDeleted = attendeeRepository.deleteByEventId(id);
+        }
+        return numOfDeleted;
+    }
+
+    public void deleteLecturerByLectureAndParticipant(UUID idLecture, UUID idParticipant) {
+
+        Lecturer lecturer = lecturerRepository.findLecturerByLectureAndParticipant(idLecture, idParticipant).
+                orElseThrow(() -> new EmptyResultDataAccessException("Lecturer not found", 1));
+
+        lecturerRepository.deleteById(lecturer.getId());
+    }
+
+    @Transactional
+    public Long deleteLecturersByParticipant(UUID id) {
+
+        if(!participantRepository.existsById(id)) {
+            throw new EmptyResultDataAccessException("Participant not found", 1);
+        }
+        Long numOfDeleted = 0L;
+
+        if (lecturerRepository.existsByParticipantId(id)) {
+            numOfDeleted = lecturerRepository.deleteByParticipantId(id);
+        }
+        return numOfDeleted;
+    }
+
+    @Transactional
+    public Long deleteLecturersByLecture(UUID id) {
+
+        if(!lectureRepository.existsById(id)) {
+            throw new EmptyResultDataAccessException("Lecture not found", 1);
+        }
+        Long numOfDeleted = 0L;
+
+        if (lecturerRepository.existsByLectureId(id)) {
+            numOfDeleted = lecturerRepository.deleteByLectureId(id);
+        }
+        return numOfDeleted;
+    }
+
+    @Transactional
+    public void deleteLecture(UUID id) {
+
+        try {
+            if (!lectureRepository.existsById(id)){
+                throw new EmptyResultDataAccessException("Lecture not found", 1);
             }
-        }
 
-        return json;
-    }
-
-    public HashMap<String, Object> deleteAttendeeByEventAndParticipant(String idEvent, String idParticipant) {
-        HashMap<String, Object> json = new HashMap<>();
-
-        // Convert String IDs to UUID
-        UUID eventID = convertStringID(idEvent);
-        UUID participantID = convertStringID(idParticipant);
-
-        // Check ID validity
-        if (eventID == null) {
-            json.put("error", "Invalid UUID format for eventID: " + idEvent);
-        } else if (participantID == null) {
-            json.put("error", "Invalid UUID format for participantID: " + idParticipant);
-        } else {
-            // Find a record in the database
-            Optional<Attendee> attendee = attendeeRepository.findAttendeeByEventAndParticipant(eventID, participantID);
-
-            if (attendee.isEmpty()) {
-                json.put("error", "Attendee not found");
-            } else {
-                UUID id = attendee.get().getId();
-                attendeeRepository.deleteById(id);
-                json.put("success", "Attendee deleted");
+            if (lecturerRepository.existsByLectureId(id)) {
+                lecturerRepository.deleteByLectureId(id);
             }
-        }
 
-        return json;
+            lectureRepository.deleteById(id);
+            lectureRepository.flush();
+        } catch (DataIntegrityViolationException ex) {
+            throw new DataIntegrityViolationException("Could not delete lecture, data integrity violated", ex);
+        }
     }
 
+    @Transactional
+    public void deleteEvent(UUID id) {
 
-    public HashMap<String, Object> deleteAttendeesByParticipant(String idString) {
+        if (!eventRepository.existsById(id)) {
+            throw new EmptyResultDataAccessException("Event not found", 1);
+        }
 
-        HashMap<String, Object> json = new HashMap<>();
-        UUID id = convertStringID(idString);
-
-        if (id == null) {
-            json.put("error", "Invalid UUID format for participantID: " + idString);
-        } else {
-            List<Attendee> attendees = attendeeRepository.findAttendeesByParticipantId(id);
-            if (attendees.isEmpty()) {
-                json.put("info", "No attendee records found for this participant");
-            } else {
-                for (Attendee attendee : attendees) {
-                    attendeeRepository.deleteById(attendee.getId());
+        try {
+            if (lectureRepository.existsByEventId(id)) {
+                Lecture lecture = lectureRepository.findByEventId(id).
+                        orElseThrow(() -> new EmptyResultDataAccessException("Lecture not found", 1));
+                if (lecturerRepository.existsByLectureId(lecture.getId())) {
+                    lecturerRepository.deleteByLectureId(lecture.getId());
                 }
-                json.put("success", "Attendee records for participantID: " + idString + " deleted");
-            }
-        }
 
-        return json;
+                lectureRepository.deleteByEventId(id);
+            }
+            if (attendeeRepository.existsByEventId(id)) {
+                attendeeRepository.deleteByEventId(id);
+            }
+
+            eventRepository.deleteById(id);
+            eventRepository.flush();
+        } catch (DataIntegrityViolationException ex) {
+            throw new DataIntegrityViolationException("Could not delete event, data integrity violated", ex);
+        }
     }
 
-    public HashMap<String, Object> deleteAttendeesByEvent(String idString) {
-        HashMap<String, Object> json = new HashMap<>();
+    @Transactional
+    public void deleteSession(UUID id) {
 
-        UUID id = convertStringID(idString);
-        if (id == null) {
-            json.put("error", "Invalid UUID format for eventID: " + idString);
-        } else {
-            List<Attendee> attendees = attendeeRepository.findAttendeesByEventId(id);
+        if (!sessionRepository.existsById(id)) {
+            throw new EmptyResultDataAccessException("Session not found", 1);
+        }
 
-            if (attendees.isEmpty()) {
-                json.put("info", "No attendee records found for this event");
-            } else {
-                for (Attendee attendee : attendees) {
-                    attendeeRepository.deleteById(attendee.getId());
+        try {
+            if(eventRepository.existsBySessionFk(id)) {
+                List<Event> events = eventRepository.findBySessionFk(id);
+
+                for(Event event: events) {
+                    if (lectureRepository.existsByEventId(event.getId())) {
+                        Lecture lecture = lectureRepository.findByEventId(event.getId()).
+                                orElseThrow(() -> new EmptyResultDataAccessException("Lecture not found", 1));
+                        if (lecturerRepository.existsByLectureId(lecture.getId())) {
+                            lecturerRepository.deleteByLectureId(lecture.getId());
+                        }
+                        lectureRepository.deleteByEventId(event.getId());
+                    }
+                    if (attendeeRepository.existsByEventId(event.getId())) {
+                        attendeeRepository.deleteByEventId(event.getId());
+                    }
                 }
-                json.put("success", "Attendee records for eventID: " + idString + " deleted");
+                eventRepository.deleteBySessionFk(id);
             }
-        }
 
-        return json;
+            sessionRepository.deleteById(id);
+            sessionRepository.flush();
+        } catch (DataIntegrityViolationException ex) {
+            throw new DataIntegrityViolationException("Could not delete session, data integrity violated", ex);
+        }
     }
 
-    public HashMap<String, Object> deleteLecturerByLectureAndParticipant(String idLectureString, String idParticipantString) {
-        HashMap<String, Object> json = new HashMap<>();
+    @Transactional
+    public void deleteParticipant(UUID id) {
 
-        // Convert String IDs to UUID
-        UUID idLecture = convertStringID(idLectureString);
-        UUID idParticipant = convertStringID(idParticipantString);
-
-        // Check ID validity
-        if (idLecture == null) {
-            json.put("error", "Invalid UUID format for lectureID: " + idLectureString);
-        } else if (idParticipant == null) {
-            json.put("error", "Invalid UUID format for participantID: " + idParticipantString);
-        } else {
-            // Find a record in the database
-            Optional<Lecturer> lecturer = lecturerRepository.findLecturerByLectureAndParticipant(idLecture, idParticipant);
-
-            if (lecturer.isEmpty()) {
-                json.put("error", "Lecturer not found");
-            } else {
-                UUID id = lecturer.get().getId();
-                lecturerRepository.deleteById(id);
-                json.put("success", "Lecturer deleted");
-            }
+        if (!participantRepository.existsById(id)) {
+            throw new EmptyResultDataAccessException("Participant not found", 1);
         }
 
-        return json;
+        try {
+            if(lecturerRepository.existsByParticipantId(id)) {
+                lecturerRepository.deleteByParticipantId(id);
+            }
+            if(attendeeRepository.existsByParticipantId(id)) {
+                attendeeRepository.deleteByParticipantId(id);
+            }
+            if(eventRepository.existsByParticipantFk(id)) {
+                throw new CustomDataIntegrityViolationException("Cannot delete a participant that is a chairman in an event");
+            }
+
+            participantRepository.deleteById(id);
+            participantRepository.flush();
+        } catch (DataIntegrityViolationException ex) {
+            throw new CustomDataIntegrityViolationException("Could not delete participant, data integrity violated", ex);
+        }
     }
 
-    public HashMap<String, Object> deleteLecturersByParticipant(String idString) {
-        HashMap<String, Object> json = new HashMap<>();
+    public void deleteConference (UUID id) {
 
-        UUID id = convertStringID(idString);
-        if (id == null) {
-            json.put("error", "Invalid UUID format for participantID: " + idString);
-        } else {
-            List<Lecturer> lecturers = lecturerRepository.findLecturersByParticipant(id);
-
-            if (lecturers.isEmpty()) {
-                json.put("info", "No attendee records found for this participant");
-            } else {
-                for (Lecturer lecturer : lecturers) {
-                    lecturerRepository.deleteById(lecturer.getId());
-                }
-                json.put("success", "Lecturer records for participantID: " + idString + " deleted");
-            }
+        if (!conferenceRepository.existsById(id)) {
+            throw new EmptyResultDataAccessException("Conference not found", 1);
         }
 
-        return json;
-    }
-
-    public HashMap<String, Object> deleteLecturersByLecture(String idString) {
-        HashMap<String, Object> json = new HashMap<>();
-
-        UUID id = convertStringID(idString);
-        if (id == null) {
-            json.put("error", "Invalid UUID format for lectureID: " + idString);
-        } else {
-            List<Lecturer> lecturers = lecturerRepository.findLecturersByLecture(id);
-
-            if (lecturers.isEmpty()) {
-                json.put("info", "No attendee records found for this participant");
-            } else {
-                for (Lecturer lecturer : lecturers) {
-                    lecturerRepository.deleteById(lecturer.getId());
-                }
-                json.put("success", "Lecturer records for lectureID: " + idString + " deleted");
-            }
-        }
-
-        return json;
-    }
-
-    public HashMap<String, Object> deleteLecture(String idString) {
-        HashMap<String, Object> json = new HashMap<>();
-
-        UUID id = convertStringID(idString);
-        if (id == null) {
-            json.put("error", "Invalid UUID format for lectureID: " + idString);
-        } else {
-            Optional<Lecture> lecture = lectureRepository.findById(id);
-            if (lecture.isEmpty()) {
-                json.put("error", "Lecture not found");
-            } else {
-                deleteLecturersByLecture(idString);
-                lectureRepository.deleteById(id);
-                json.put("success", "Lecture deleted");
-            }
-        }
-
-        return json;
+        conferenceRepository.deleteById(id);
     }
 }

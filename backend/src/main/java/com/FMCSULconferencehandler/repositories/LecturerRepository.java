@@ -4,6 +4,7 @@ import com.FMCSULconferencehandler.model.Attendee;
 import com.FMCSULconferencehandler.model.Participant;
 import com.FMCSULconferencehandler.model.Lecturer;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -23,4 +24,14 @@ public interface LecturerRepository extends JpaRepository<Lecturer, UUID> {
 
     @Query("SELECT l FROM Lecturer l WHERE l.lecture.id = :idLecture AND l.participant.id = :idParticipant")
     Optional<Lecturer> findLecturerByLectureAndParticipant(@Param("idLecture") UUID idLecture, @Param("idParticipant") UUID idParticipant);
+
+    @Modifying
+    Long deleteByParticipantId(UUID idParticipant);
+
+    boolean existsByParticipantId(UUID id);
+
+    @Modifying
+    Long deleteByLectureId(UUID idLecture);
+
+    boolean existsByLectureId(UUID id);
 }

@@ -103,65 +103,97 @@ public class ConferenceController {
     }
 
     @DeleteMapping("/deleteType")
-    public ResponseEntity<Object> deleteType(@RequestParam("type") String id) {
+    public ResponseEntity<JsonResponse> deleteType(@RequestParam("type") UUID id) {
 
-        HashMap<String, Object> result = conferenceService.deleteType(id);
-        return new ResponseEntity<>(result, (result.containsKey("error")) ? HttpStatus.CONFLICT : HttpStatus.OK);
+        conferenceService.deleteType(id);
+        return createSuccessJsonResponse("Type deleted");
     }
 
     @DeleteMapping("/deleteTitle")
-    public ResponseEntity<Object> deleteTitle(@RequestParam("title") String id) {
+    public ResponseEntity<JsonResponse> deleteTitle(@RequestParam("title") UUID id) {
 
-        HashMap<String, Object> result = conferenceService.deleteTitle(id);
-        return new ResponseEntity<>(result, (result.containsKey("error")) ? HttpStatus.CONFLICT : HttpStatus.OK);
+        conferenceService.deleteTitle(id);
+        return createSuccessJsonResponse("Title deleted");
     }
 
     @DeleteMapping("/deleteAttendee")
-    public ResponseEntity<Object> deleteAttendee(@RequestParam("eventID") String eventID, @RequestParam("participantID") String participantID) {
+    public ResponseEntity<JsonResponse> deleteAttendee(@RequestParam("eventID") UUID eventID, @RequestParam("participantID") UUID participantID) {
 
-        HashMap<String, Object> result = conferenceService.deleteAttendeeByEventAndParticipant(eventID, participantID);
-        return new ResponseEntity<>(result, (result.containsKey("error")) ? HttpStatus.CONFLICT : HttpStatus.OK);
+        conferenceService.deleteAttendeeByEventAndParticipant(eventID, participantID);
+        return createSuccessJsonResponse("Attendee deleted");
     }
 
     @DeleteMapping("/deleteAttendeesByParticipant")
-    public ResponseEntity<Object> deleteAttendeesByParticipant(@RequestParam("participantID") String participantID) {
+    public ResponseEntity<JsonResponse> deleteAttendeesByParticipant(@RequestParam("participantID") UUID participantID) {
 
-        HashMap<String, Object> result = conferenceService.deleteAttendeesByParticipant(participantID);
-        return new ResponseEntity<>(result, (result.containsKey("error")) ? HttpStatus.CONFLICT : HttpStatus.OK);
+        Long numOfDeleted = conferenceService.deleteAttendeesByParticipant(participantID);
+        return createSuccessJsonResponse("Deleted " + numOfDeleted + " attendee records");
     }
 
     @DeleteMapping("/deleteAttendeesByEvent")
-    public ResponseEntity<Object> deleteAttendeesByEvent(@RequestParam("eventID") String eventID) {
+    public ResponseEntity<JsonResponse> deleteAttendeesByEvent(@RequestParam("eventID") UUID eventID) {
 
-        HashMap<String, Object> result = conferenceService.deleteAttendeesByEvent(eventID);
-        return new ResponseEntity<>(result, (result.containsKey("error")) ? HttpStatus.CONFLICT : HttpStatus.OK);
+        Long numOfDeleted = conferenceService.deleteAttendeesByEvent(eventID);
+        return createSuccessJsonResponse("Deleted " + numOfDeleted + " attendee records");
     }
 
     @DeleteMapping("/deleteLecturer")
-    public ResponseEntity<Object> deleteLecturer(@RequestParam("lectureID") String lectureID, @RequestParam("participantID") String participantID) {
+    public ResponseEntity<JsonResponse> deleteLecturer(@RequestParam("lectureID") UUID lectureID, @RequestParam("participantID") UUID participantID) {
 
-        HashMap<String, Object> result = conferenceService.deleteLecturerByLectureAndParticipant(lectureID, participantID);
-        return new ResponseEntity<>(result, (result.containsKey("error")) ? HttpStatus.CONFLICT : HttpStatus.OK);
+        conferenceService.deleteLecturerByLectureAndParticipant(lectureID, participantID);
+        return createSuccessJsonResponse("Lecturer deleted");
     }
 
     @DeleteMapping("/deleteLecturersByParticipant")
-    public ResponseEntity<Object> deleteLecturersByParticipant(@RequestParam("participantID") String participantID) {
+    public ResponseEntity<JsonResponse> deleteLecturersByParticipant(@RequestParam("participantID") UUID participantID) {
 
-        HashMap<String, Object> result = conferenceService.deleteLecturersByParticipant(participantID);
-        return new ResponseEntity<>(result, (result.containsKey("error")) ? HttpStatus.CONFLICT : HttpStatus.OK);
+        Long numOfDeleted = conferenceService.deleteLecturersByParticipant(participantID);
+        return createSuccessJsonResponse("Deleted " + numOfDeleted + " lecturer records");
     }
 
     @DeleteMapping("/deleteLecturersByLecture")
-    public ResponseEntity<Object> deleteLecturersByLecture(@RequestParam("lectureID") String lectureID) {
+    public ResponseEntity<JsonResponse> deleteLecturersByLecture(@RequestParam("lectureID") UUID lectureID) {
 
-        HashMap<String, Object> result = conferenceService.deleteLecturersByLecture(lectureID);
-        return new ResponseEntity<>(result, (result.containsKey("error")) ? HttpStatus.CONFLICT : HttpStatus.OK);
+        Long numOfDeleted = conferenceService.deleteLecturersByLecture(lectureID);
+        return createSuccessJsonResponse("Deleted " + numOfDeleted + " lecturer records");
     }
 
     @DeleteMapping("/deleteLecture")
-    public ResponseEntity<Object> deleteLecture(@RequestParam("lectureID") String lectureID) {
+    public ResponseEntity<JsonResponse> deleteLecture(@RequestParam("lectureID") UUID lectureID) {
 
-        HashMap<String, Object> result = conferenceService.deleteLecturersByLecture(lectureID);
-        return new ResponseEntity<>(result, (result.containsKey("error")) ? HttpStatus.CONFLICT : HttpStatus.OK);
+        conferenceService.deleteLecture(lectureID);
+        return createSuccessJsonResponse("Lecture deleted");
+    }
+
+    @DeleteMapping("/deleteEvent")
+    public ResponseEntity<JsonResponse> deleteEvent(@RequestParam("eventID") UUID eventID) {
+
+        conferenceService.deleteEvent(eventID);
+        return createSuccessJsonResponse("Event deleted");
+    }
+
+    @DeleteMapping("/deleteSession")
+    public ResponseEntity<JsonResponse> deleteSession(@RequestParam("sessionID") UUID sessionID) {
+
+        conferenceService.deleteSession(sessionID);
+        return createSuccessJsonResponse("Session deleted");
+    }
+
+    @DeleteMapping("/deleteParticipant")
+    public ResponseEntity<JsonResponse> deleteParticipant(@RequestParam("participantID") UUID participantID) {
+
+        conferenceService.deleteParticipant(participantID);
+        return createSuccessJsonResponse("Participant deleted");
+    }
+
+    @DeleteMapping("/deleteConference")
+    public ResponseEntity<JsonResponse> deleteConference(@RequestParam("conferenceID") UUID conferenceID) {
+
+        conferenceService.deleteConference(conferenceID);
+        return createSuccessJsonResponse("Conference deleted");
+    }
+
+    private ResponseEntity<JsonResponse> createSuccessJsonResponse(String message) {
+        return new ResponseEntity<>(new JsonResponse(null, message), HttpStatus.OK);
     }
 }

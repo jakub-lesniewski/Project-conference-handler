@@ -1,7 +1,6 @@
-import { useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 
-function EventBox({ handleEventArrChange }) {
+function EventBox() {
   const { register, control, watch } = useForm({
     defaultValues: {
       eventsArr: [{ name: "Event 1", atendeeLimit: 40 }],
@@ -14,6 +13,7 @@ function EventBox({ handleEventArrChange }) {
   });
 
   const watchResult = watch("eventsArr");
+  console.log(watchResult);
 
   return (
     <>
@@ -26,16 +26,6 @@ function EventBox({ handleEventArrChange }) {
                   required: true,
                 })}
                 placeholder="Name"
-                className="rounded-md border-2 px-2 py-1 transition-all duration-300 focus:border-fmcsGreen focus:outline-none focus:ring-fmcsGreen"
-              />
-
-              <input
-                {...register(`eventsArr.${index}.atendeeLimit`, {
-                  required: true,
-                  type: "number",
-                  min: 0,
-                })}
-                placeholder="Attendee Limit"
                 className="rounded-md border-2 px-2 py-1 transition-all duration-300 focus:border-fmcsGreen focus:outline-none focus:ring-fmcsGreen"
               />
 

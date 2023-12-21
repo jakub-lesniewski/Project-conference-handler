@@ -15,6 +15,7 @@ function InputField({
         defaultValue={defaultValue}
         type={type}
         className="rounded-md border-2 px-2 py-1 transition-all duration-300 focus:border-fmcsGreen focus:outline-none focus:ring-fmcsGreen"
+        required
       />
     </div>
   );

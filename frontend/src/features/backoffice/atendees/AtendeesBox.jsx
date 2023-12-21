@@ -22,6 +22,10 @@ function AtendeesBox() {
     setShowModal(!showModal);
   }
 
+  function removeAtendee(id) {
+    setAtendeesArr((prev) => prev.filter((atendee) => atendee.id !== id));
+  }
+
   return (
     <section>
       <div className="max-h-[800px] w-full overflow-auto border-2 shadow-md sm:rounded-lg">
@@ -43,6 +47,7 @@ function AtendeesBox() {
                 atendee={atendee}
                 key={atendee.id}
                 onModify={modifyAtendee}
+                removeAtendee={removeAtendee}
               />
             ))}
           </tbody>

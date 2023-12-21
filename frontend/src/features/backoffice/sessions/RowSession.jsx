@@ -2,9 +2,10 @@ function RowSession({ session, removeSession, setCurrentSession, onClick }) {
   const {
     id,
     name,
-    room_number,
-    time_start,
-    time_end,
+    room,
+    startingDate,
+    endingDate,
+    atendeeLimit,
     city,
     street,
     building,
@@ -20,9 +21,10 @@ function RowSession({ session, removeSession, setCurrentSession, onClick }) {
     >
       <td className="p-3 text-center">{id}</td>
       <td className="p-3 text-center">{name}</td>
-      <td className="p-3 text-center">{room_number}</td>
-      <td className="p-3 text-center">{time_start}</td>
-      <td className="p-3 text-center">{time_end}</td>
+      <td className="p-3 text-center">{room}</td>
+      <td className="p-3 text-center">{startingDate}</td>
+      <td className="p-3 text-center">{endingDate}</td>
+      <td className="p-3 text-center">{atendeeLimit}</td>
       <td className="p-3 text-center">{city}</td>
       <td className="p-3 text-center">{street}</td>
       <td className="p-3 text-center">{building}</td>

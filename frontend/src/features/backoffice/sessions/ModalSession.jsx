@@ -1,77 +1,118 @@
-import { useForm } from "react-hook-form";
-import InputField from "../../../ui/InputField"; // Import your reusable input field component
+import { useForm, FormProvider } from "react-hook-form";
+import InputField from "../../../ui/InputField";
+import EventBox from "./EventBox";
+import { useState } from "react";
 
-function ModalSession({ session, toggleModal }) {
+function ModalSession({ session, toggleModal, addSession }) {
   const { register, handleSubmit } = useForm();
+  const [eventArr, setEventArr] = useState();
 
-  const {
-    id,
-    name,
-    room_number,
-    time_start,
-    time_end,
-    city,
-    street,
-    building,
-  } = session;
+  function handleEventArrChange(newArr) {
+    setEventArr(newArr);
+  }
 
   function onSubmit(data) {
-    // toggleModal(false);
-    console.log(data);
+    const sessionData = data;
+
+    const newSession = {
+      name: sessionData.name,
+      room: sessionData.room,
+      atendeeLimit: sessionData.atendeeLimit,
+      startingDate: sessionData.startingDate,
+      endingDate: sessionData.endingDate,
+      city: sessionData.city,
+      street: sessionData.street,
+      building: sessionData.building,
+      eventArr: sessionData.eventArr,
+    };
+
+    addSession(newSession);
+    console.log(newSession);
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="grid grid-cols-2 gap-5">
-        <InputField
-          label="Name"
-          name="name"
-          defaultValue={name}
-          register={register}
-        />
+    <FormProvider>
+      <form onSubmit={handleSubmit(onSubmit)} className="h-[500px]">
+        <section className="grid grid-cols-3 gap-4">
+          <div className="flex flex-col gap-2">
+            <InputField
+              defaultValue={session?.name}
+              label="Name"
+              placeholder="De revolutionibus orbium coelestium"
+              name="name"
+              register={register}
+            />
 
-        <InputField
-          label="City"
-          name="city"
-          defaultValue={city}
-          register={register}
-        />
+            <InputField
+              defaultValue={session?.room}
+              label="Room"
+              placeholder="C201"
+              name="room"
+              register={register}
+            />
 
-        <InputField
-          label="Street"
-          name="street"
-          defaultValue={street}
-          register={register}
-        />
+            <InputField
+              label="Atendee limit"
+              type="number"
+              name="atendeeLimit"
+              register={register}
+            />
+          </div>
 
-        <InputField
-          label="Building"
-          name="building"
-          defaultValue={building}
-          register={register}
-        />
+          <div className="flex flex-col gap-2">
+            <InputField
+              defaultValue={session?.city}
+              label="City"
+              placeholder="Łódź"
+              name="city"
+              register={register}
+            />
 
-        <InputField
-          label="Starting time"
-          name="startTime"
-          defaultValue={time_start}
-          type="datetime-local"
-          register={register}
-        />
+            <InputField
+              defaultValue={session?.street}
+              label="Street"
+              placeholder="Stefana Banacha 22"
+              name="street"
+              register={register}
+            />
 
-        <InputField
-          label="Ending time"
-          name="endTime"
-          defaultValue={time_end}
-          type="datetime-local"
-          register={register}
-        />
-      </div>
+            <InputField
+              defaultValue={session?.building}
+              label="Building"
+              placeholder="Faculty of Mathematics and Computer Science, University of Lodz"
+              name="building"
+              register={register}
+            />
+          </div>
 
-      <button className="mt-5 rounded-md bg-fmcsGreen px-2 py-1 tracking-wide text-fmcsWhite">
-        submit changes
-      </button>
-    </form>
+          <div className="flex flex-col gap-2">
+            <InputField
+              defaultValue={session?.startingDate}
+              label="Starting date"
+              name="startingDate"
+              type="datetime-local"
+              register={register}
+            />
+
+            <InputField
+              defaultValue={session?.endingDate}
+              label="Ending date"
+              name="endingDate"
+              type="datetime-local"
+              register={register}
+            />
+          </div>
+        </section>
+
+        <section className="overflox-auto-y mt-12 border border-fmcsBlack p-2">
+          <EventBox handleEventArrChange={handleEventArrChange} />
+        </section>
+
+        <button className="mt-8 rounded-md bg-fmcsGreen px-2 py-1 tracking-wide text-fmcsWhite">
+          submit changes
+        </button>
+      </form>
+    </FormProvider>
   );
 }
 

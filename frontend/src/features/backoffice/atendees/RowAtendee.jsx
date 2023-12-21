@@ -1,4 +1,4 @@
-function RowAtendee({ atendee, onModify }) {
+function RowAtendee({ atendee, onModify, removeAtendee }) {
   const { id, name, email, affiliation } = atendee;
 
   function handleModify() {
@@ -17,10 +17,10 @@ function RowAtendee({ atendee, onModify }) {
 
       <td className="w-18 relative text-center">
         <button
-          // onClick={(e) => {
-          //   e.stopPropagation();
-          //   removeSession(id);
-          // }}
+          onClick={(e) => {
+            e.stopPropagation();
+            removeAtendee(id);
+          }}
           className="absolute inset-0 h-full w-24 overflow-hidden px-4 py-2 transition-all duration-200 hover:bg-fmcsRed hover:text-fmcsWhite"
         >
           remove

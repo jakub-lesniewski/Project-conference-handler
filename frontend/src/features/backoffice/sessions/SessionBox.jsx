@@ -6,7 +6,8 @@ import ModalSession from "./ModalSession";
 const tableHeadRow = [
   "id",
   "name",
-  "room number",
+  "room",
+  "atendee limit",
   "starting date",
   "end date",
   "city",
@@ -16,32 +17,17 @@ const tableHeadRow = [
 
 function SessionBox() {
   const [sessionsArr, setSessionsArr] = useState([]);
-  const [sessionId, setSessionId] = useState(1);
   const [showModal, setShowModal] = useState(false);
-  const [currentSession, setCurrentSession] = useState(null);
 
-  function addSession() {
-    setSessionId((prevSessionId) => prevSessionId + 1);
-
-    const newSession = {
-      id: sessionId,
-      name: `Session ${sessionsArr.length + 1}`,
-      room_number: "Room ***",
-      time_start: "01-10-23 TUE 12:04",
-      time_end: "02-10-23 WED 12:04",
-      city: "Łódź",
-      street: "Banacha 4",
-      building: "FMCS UŁ",
-    };
-
-    setSessionsArr((prevSessionsArr) => [...prevSessionsArr, newSession]);
+  function addSession(session) {
+    setSessionsArr((prev) => [...prev, session]);
   }
 
   function removeSession(id) {
-    setSessionsArr((prevSessionsArr) =>
-      prevSessionsArr.filter((session) => session.id !== id),
-    );
+    setSessionsArr((prev) => prev.filter((session) => session.id !== id));
   }
+
+  function modifySession(id) {}
 
   function toggleModal() {
     setShowModal(!showModal);
@@ -66,17 +52,15 @@ function SessionBox() {
             {sessionsArr.map((session) => (
               <RowSession
                 session={session}
-                removeSession={removeSession}
-                setCurrentSession={setCurrentSession}
-                onClick={toggleModal}
                 key={session.id}
+                removeSession={removeSession}
               />
             ))}
           </tbody>
         </table>
 
         <button
-          onClick={addSession}
+          onClick={toggleModal}
           className="m-4 rounded-md bg-fmcsGreen px-2 py-1 tracking-wide text-fmcsWhite"
         >
           add session
@@ -84,7 +68,7 @@ function SessionBox() {
       </div>
       {showModal && (
         <ModalWindow onClose={toggleModal}>
-          <ModalSession session={currentSession} toggleModal={toggleModal} />
+          <ModalSession toggleModal={toggleModal} addSession={addSession} />
         </ModalWindow>
       )}
     </section>

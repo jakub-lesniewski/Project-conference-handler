@@ -27,8 +27,6 @@ function SessionBox() {
     setSessionsArr((prev) => prev.filter((session) => session.id !== id));
   }
 
-  function modifySession(id) {}
-
   function toggleModal() {
     setShowModal(!showModal);
   }

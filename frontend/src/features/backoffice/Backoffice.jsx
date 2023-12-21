@@ -3,9 +3,11 @@ import SessionBox from "./sessions/SessionBox";
 
 function Backoffice() {
   return (
-    <main className="m-10 grid grid-cols-2 gap-x-5">
-      <SessionBox />
+    <main className="m-10 grid grid-cols-3 gap-x-5">
       <AtendeesBox />
+      <div className=" col-span-2">
+        <SessionBox />
+      </div>
     </main>
   );
 }

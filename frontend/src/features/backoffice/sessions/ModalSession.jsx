@@ -34,6 +34,7 @@ function ModalSession({ session, toggleModal, addSession }) {
 
     addSession(newSession);
     console.log(newSession);
+    toggleModal();
   }
 
   return (
@@ -110,7 +111,7 @@ function ModalSession({ session, toggleModal, addSession }) {
       </section>
 
       <section className="overflow-auto-y mt-12 border border-fmcsBlack p-2">
-        <ul className="flex flex-col gap-2">
+        <ul className="gap-2g flex flex-col">
           {fields.map((item, index) => {
             return (
               <li key={index} className="flex h-8 gap-2">

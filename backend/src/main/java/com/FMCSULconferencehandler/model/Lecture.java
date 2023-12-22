@@ -44,7 +44,7 @@ public class Lecture{
         json.put("time-start",event.getTime_start().toString());
         json.put("time-end",event.getTime_end().toString());
         json.put("amount_of_participants",String.valueOf(event.getAmount_of_participants()));
-        json.put("session_fk",event.getSession_fk().toString());
+        json.put("session_fk",event.getSessionFk().toString());
         json.put("abstract",getAbstract());
 
     return json;

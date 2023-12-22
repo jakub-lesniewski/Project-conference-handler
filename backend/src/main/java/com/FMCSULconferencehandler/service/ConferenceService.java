@@ -3,23 +3,30 @@ package com.FMCSULconferencehandler.service;
 
 import com.FMCSULconferencehandler.model.*;
 import com.FMCSULconferencehandler.repositories.*;
-import jakarta.transaction.Transactional;
+import com.fasterxml.jackson.databind.introspect.TypeResolutionContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
 @Service
 public class ConferenceService {
-    private SessionRepository sessionRepository;
-    private EventRepository eventRepository;
-    private AttendeeRepository attendeeRepository;
-    private LecturerRepository lecturerRepository;
+    private final SessionRepository sessionRepository;
+    private final EventRepository eventRepository;
+    private final AttendeeRepository attendeeRepository;
+    private final LecturerRepository lecturerRepository;
+    private final ParticipantRepository participantRepository;
+    private final LectureRepository lectureRepository;
+    private final ConferenceRepository conferenceRepository;
+    private final TypeRepository typeRepository;
+    private final TitleRepository titleRepository;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConferenceService.class);
 
-    private ParticipantRepository participantRepository;
-    private LectureRepository lectureRepository;
-    private ConferenceRepository conferenceRepository;
-
-    public ConferenceService(SessionRepository sessionRepository, ConferenceRepository conferenceRepository, LecturerRepository lecturerRepository, LectureRepository lectureRepository, EventRepository eventRepository, AttendeeRepository attendeeRepository, ParticipantRepository participantRepository) {
+    public ConferenceService(SessionRepository sessionRepository, ConferenceRepository conferenceRepository, LecturerRepository lecturerRepository, LectureRepository lectureRepository, EventRepository eventRepository, AttendeeRepository attendeeRepository, ParticipantRepository participantRepository, TypeRepository typeRepository, TitleRepository titleRepository) {
         this.sessionRepository = sessionRepository;
         this.eventRepository = eventRepository;
         this.attendeeRepository = attendeeRepository;
@@ -27,6 +34,8 @@ public class ConferenceService {
         this.lectureRepository=lectureRepository;
         this.lecturerRepository = lecturerRepository;
         this.conferenceRepository=conferenceRepository;
+        this.typeRepository=typeRepository;
+        this.titleRepository=titleRepository;
     }
 
     public void addConference(Conference conference)
@@ -49,7 +58,6 @@ public class ConferenceService {
         return false;
     }
 
-
     public boolean addEvent(Event event)
     {
        /* UUID sessionId = event.getSession().getId();
@@ -64,8 +72,8 @@ public class ConferenceService {
 
     public void addParticipantToEvent( UUID event_ID,UUID participant_id)
     {
-        Event event = eventRepository.findById(event_ID).orElseThrow(() -> new RuntimeException("Event not found"));
-        Participant participant=participantRepository.findById(participant_id).orElseThrow(() -> new RuntimeException("participant not found"));
+        Event event = eventRepository.findById(event_ID).orElseThrow(() -> new EmptyResultDataAccessException("Event not found", 1));
+        Participant participant=participantRepository.findById(participant_id).orElseThrow(() -> new EmptyResultDataAccessException("participant not found", 1));
 
         event.setAmount_of_participants(event.getAmount_of_participants()+1);
 
@@ -78,18 +86,15 @@ public class ConferenceService {
     {
         if(participantRepository.findParticipantById(id) == null)
             return null;
-        List<Event> eventList = attendeeRepository.findByParticipantId(id);
 
-        return  eventList;
+        return attendeeRepository.findEventByParticipantId(id);
     }
 
     public List<Event> eventsInSession(UUID id)
     {
         if(sessionRepository.findSessionById(id) == null)
             return null;
-        List<Event> eventList = eventRepository.findBySession_fk(id);
-
-        return  eventList;
+        return eventRepository.findBySessionFk(id);
     }
     @Transactional
     public Lecture addLecture(LectureRequest lecture)
@@ -124,29 +129,17 @@ public class ConferenceService {
         return lecture1;
     }
 
-
-    public Lecture getLectureById(UUID id) {
-        return lectureRepository.findById(id).orElseThrow(() -> new RuntimeException("lecture not found"));
-
-    }
-
-    public HashMap<String,Object>getJsonLecture(UUID id)
+    public Map<String,Object>getJsonLecture(UUID id)
     {
-        //HashMap<String,Object> json=getLectureById(id).jsonLong();
+        Map<String, Object> json = lectureRepository.findById(id)
+                .orElseThrow(() -> new EmptyResultDataAccessException("lecture not found", 1))
+                .jsonLong();
 
-        HashMap<String, Object> json = new HashMap<>();
-        try {
-            json = getLectureById(id).jsonLong();
-        }catch(RuntimeException e){
-            json.put("error", e.getMessage());
-            return json;
-        }
+        List<String> speakerIds = lecturerRepository.findByLectureId(id).stream()
+                .map(Participant::getId)
+                .map(UUID::toString)
+                .toList();
 
-        List<String> speakerIds = new ArrayList<>();
-        for(Participant p : lecturerRepository.findByLectureId(id))
-        {
-            speakerIds.add(p.getId().toString());
-        }
         json.put("speaker",speakerIds);
         return json;
     }
@@ -177,7 +170,7 @@ public class ConferenceService {
             List<Event> events = new ArrayList<>();
             List<Map<String, Object>> lecturesData = new ArrayList<>();
 
-            for (Event e : eventRepository.findBySession_fk(session.getId())) {
+            for (Event e : eventRepository.findBySessionFk(session.getId())) {
                 for (Lecture l : lectureRepository.findByEvent_fk(e.getId())) {
                     lecturesData.add(getJsonLecture(l.getId()));
                 }
@@ -211,27 +204,27 @@ public class ConferenceService {
         if(event.getTime_start().isAfter(event.getTime_end()))
             return false;
 
-        if(event.getSession_fk() != null){
-            if(sessionRepository.findSessionById(event.getSession_fk()) == null)
+        if(event.getSessionFk() != null){
+            if(sessionRepository.findSessionById(event.getSessionFk()) == null)
                 return false;
 
             List<Event> list = new ArrayList<>();
 
-            for(Event e : eventRepository.findBySession_fkOrderByTime_startAsc(event.getSession_fk()))
-                if(e.getSession_fk().equals(event.getSession_fk()))
+            for(Event e : eventRepository.findBySessionFkOrderByTime_startAsc(event.getSessionFk()))
+                if(e.getSessionFk().equals(event.getSessionFk()))
                     list.add(e);
 
-            if(list.size() == 0 && !sessionRepository.findSessionById(event.getSession_fk()).getTime_start().isAfter(event.getTime_start())
-                    && !sessionRepository.findSessionById(event.getSession_fk()).getTime_end().isBefore(event.getTime_end()))
+            if(list.isEmpty() && !sessionRepository.findSessionById(event.getSessionFk()).getTime_start().isAfter(event.getTime_start())
+                    && !sessionRepository.findSessionById(event.getSessionFk()).getTime_end().isBefore(event.getTime_end()))
                 return true;
             if(!list.get(0).getTime_start().isBefore(event.getTime_end()) &&
                     !sessionRepository.findSessionById(
-                            event.getSession_fk())
+                            event.getSessionFk())
                             .getTime_start()
                             .isAfter(event.getTime_start()))
                 return true;
             if(!(list.get(list.size() - 1).getTime_end().isAfter(event.getTime_start()))
-            && !sessionRepository.findSessionById(event.getSession_fk()).getTime_end().isBefore(event.getTime_end()))
+            && !sessionRepository.findSessionById(event.getSessionFk()).getTime_end().isBefore(event.getTime_end()))
                 return true;
             for(int i = 0; i < list.size(); i++){
                 if(!list.get(i).getTime_end().isAfter(event.getTime_start()) &&
@@ -241,5 +234,218 @@ public class ConferenceService {
             return false;
         }
         return true;
+    }
+
+    public void deleteType (UUID id) {
+
+        if(!typeRepository.existsById(id)) {
+            throw new EmptyResultDataAccessException("Type not found", 1);
+        }
+
+        try {
+            typeRepository.deleteById(id);
+        } catch (DataIntegrityViolationException ex) {
+            throw new DataIntegrityViolationException("Could not delete type, data integrity violated");
+        }
+    }
+
+    public void deleteTitle(UUID id) {
+
+        if (!titleRepository.existsById(id)) {
+            throw new EmptyResultDataAccessException("Title not found", 1);
+        }
+
+        try {
+            titleRepository.deleteById(id);
+        } catch (DataIntegrityViolationException ex) {
+            throw new DataIntegrityViolationException("Could not delete title, data integrity violated");
+        }
+    }
+
+    public void deleteAttendeeByEventAndParticipant(UUID idEvent, UUID idParticipant) {
+
+        Attendee attendee = attendeeRepository.findAttendeeByEventAndParticipant(idEvent, idParticipant).
+                orElseThrow(() -> new EmptyResultDataAccessException("Attendee not found", 1));
+
+        attendeeRepository.deleteById(attendee.getId());
+    }
+
+    @Transactional
+    public Long deleteAttendeesByParticipant(UUID id) {
+
+        if(!participantRepository.existsById(id)) {
+            throw new EmptyResultDataAccessException("Participant not found", 1);
+        }
+        Long numOfDeleted = 0L;
+
+        if (attendeeRepository.existsByParticipantId(id)) {
+            numOfDeleted = attendeeRepository.deleteByParticipantId(id);
+        }
+        return numOfDeleted;
+    }
+
+    @Transactional
+    public Long deleteAttendeesByEvent(UUID id) {
+
+        if(!eventRepository.existsById(id)) {
+            throw new EmptyResultDataAccessException("Event not found", 1);
+        }
+        Long numOfDeleted = 0L;
+
+        if (attendeeRepository.existsByEventId(id)) {
+            numOfDeleted = attendeeRepository.deleteByEventId(id);
+        }
+        return numOfDeleted;
+    }
+
+    public void deleteLecturerByLectureAndParticipant(UUID idLecture, UUID idParticipant) {
+
+        Lecturer lecturer = lecturerRepository.findLecturerByLectureAndParticipant(idLecture, idParticipant).
+                orElseThrow(() -> new EmptyResultDataAccessException("Lecturer not found", 1));
+
+        lecturerRepository.deleteById(lecturer.getId());
+    }
+
+    @Transactional
+    public Long deleteLecturersByParticipant(UUID id) {
+
+        if(!participantRepository.existsById(id)) {
+            throw new EmptyResultDataAccessException("Participant not found", 1);
+        }
+        Long numOfDeleted = 0L;
+
+        if (lecturerRepository.existsByParticipantId(id)) {
+            numOfDeleted = lecturerRepository.deleteByParticipantId(id);
+        }
+        return numOfDeleted;
+    }
+
+    @Transactional
+    public Long deleteLecturersByLecture(UUID id) {
+
+        if(!lectureRepository.existsById(id)) {
+            throw new EmptyResultDataAccessException("Lecture not found", 1);
+        }
+        Long numOfDeleted = 0L;
+
+        if (lecturerRepository.existsByLectureId(id)) {
+            numOfDeleted = lecturerRepository.deleteByLectureId(id);
+        }
+        return numOfDeleted;
+    }
+
+    @Transactional
+    public void deleteLecture(UUID id) {
+
+        try {
+            if (!lectureRepository.existsById(id)){
+                throw new EmptyResultDataAccessException("Lecture not found", 1);
+            }
+
+            if (lecturerRepository.existsByLectureId(id)) {
+                lecturerRepository.deleteByLectureId(id);
+            }
+
+            lectureRepository.deleteById(id);
+            lectureRepository.flush();
+        } catch (DataIntegrityViolationException ex) {
+            throw new DataIntegrityViolationException("Could not delete lecture, data integrity violated", ex);
+        }
+    }
+
+    @Transactional
+    public void deleteEvent(UUID id) {
+
+        if (!eventRepository.existsById(id)) {
+            throw new EmptyResultDataAccessException("Event not found", 1);
+        }
+
+        try {
+            if (lectureRepository.existsByEventId(id)) {
+                Lecture lecture = lectureRepository.findByEventId(id).
+                        orElseThrow(() -> new EmptyResultDataAccessException("Lecture not found", 1));
+                if (lecturerRepository.existsByLectureId(lecture.getId())) {
+                    lecturerRepository.deleteByLectureId(lecture.getId());
+                }
+
+                lectureRepository.deleteByEventId(id);
+            }
+            if (attendeeRepository.existsByEventId(id)) {
+                attendeeRepository.deleteByEventId(id);
+            }
+
+            eventRepository.deleteById(id);
+            eventRepository.flush();
+        } catch (DataIntegrityViolationException ex) {
+            throw new DataIntegrityViolationException("Could not delete event, data integrity violated", ex);
+        }
+    }
+
+    @Transactional
+    public void deleteSession(UUID id) {
+
+        if (!sessionRepository.existsById(id)) {
+            throw new EmptyResultDataAccessException("Session not found", 1);
+        }
+
+        try {
+            if(eventRepository.existsBySessionFk(id)) {
+                List<Event> events = eventRepository.findBySessionFk(id);
+
+                for(Event event: events) {
+                    if (lectureRepository.existsByEventId(event.getId())) {
+                        Lecture lecture = lectureRepository.findByEventId(event.getId()).
+                                orElseThrow(() -> new EmptyResultDataAccessException("Lecture not found", 1));
+                        if (lecturerRepository.existsByLectureId(lecture.getId())) {
+                            lecturerRepository.deleteByLectureId(lecture.getId());
+                        }
+                        lectureRepository.deleteByEventId(event.getId());
+                    }
+                    if (attendeeRepository.existsByEventId(event.getId())) {
+                        attendeeRepository.deleteByEventId(event.getId());
+                    }
+                }
+                eventRepository.deleteBySessionFk(id);
+            }
+
+            sessionRepository.deleteById(id);
+            sessionRepository.flush();
+        } catch (DataIntegrityViolationException ex) {
+            throw new DataIntegrityViolationException("Could not delete session, data integrity violated", ex);
+        }
+    }
+
+    @Transactional
+    public void deleteParticipant(UUID id) {
+
+        if (!participantRepository.existsById(id)) {
+            throw new EmptyResultDataAccessException("Participant not found", 1);
+        }
+
+        try {
+            if(lecturerRepository.existsByParticipantId(id)) {
+                lecturerRepository.deleteByParticipantId(id);
+            }
+            if(attendeeRepository.existsByParticipantId(id)) {
+                attendeeRepository.deleteByParticipantId(id);
+            }
+            if(eventRepository.existsByParticipantFk(id)) {
+                throw new CustomDataIntegrityViolationException("Cannot delete a participant that is a chairman in an event");
+            }
+
+            participantRepository.deleteById(id);
+            participantRepository.flush();
+        } catch (DataIntegrityViolationException ex) {
+            throw new CustomDataIntegrityViolationException("Could not delete participant, data integrity violated", ex);
+        }
+    }
+
+    public void deleteConference (UUID id) {
+
+        if (!conferenceRepository.existsById(id)) {
+            throw new EmptyResultDataAccessException("Conference not found", 1);
+        }
+
+        conferenceRepository.deleteById(id);
     }
 }

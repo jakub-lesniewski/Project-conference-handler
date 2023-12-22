@@ -8,6 +8,7 @@ export default {
         fmcsBlack: "#333333",
         fmcsGreen: "#048c04",
         fmcsRed: "#E74C3C",
+        fmcsGray: "#D0D9D4",
       },
       height: {
         screen: "100dvh",

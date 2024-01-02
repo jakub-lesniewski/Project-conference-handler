@@ -53,32 +53,25 @@ public class ConferenceController {
     }
 
     @PostMapping ("/participantToEvent")
-    public ResponseEntity<Map<String, String>> addParticipantToEvent(@RequestBody ParticipantToEventDTO dto)
+    public ResponseEntity<JsonResponse> addAttendee(@RequestBody ParticipantToEventDTO dto)
     {
-        Map<String, String> object = new HashMap<>();
-        conferenceService.addParticipantToEvent(dto.getIdEvent(),dto.getIdParticipant());
-
-        object.put("success", "participant added");
-        return new ResponseEntity<>(object, HttpStatus.OK);
+        conferenceService.addAttendee(dto.getIdEvent(),dto.getIdParticipant());
+        return createSuccessJsonResponse("participant added");
     }
 
 
     @GetMapping("/attendance/{id}")
     public ResponseEntity<Object> eventsForParticipants(@PathVariable("id") UUID id)
     {
-        if(conferenceService.participantEvent(id) == null)
-            return new ResponseEntity<>("user not found", HttpStatus.CONFLICT);
-        return new  ResponseEntity<>(conferenceService.participantEvent(id),HttpStatus.OK);
+        List<Event> events = conferenceService.participantEvent(id);
+        return new ResponseEntity<>(events, HttpStatus.OK);
     }
 
     @GetMapping("/eventInSession/{id}")
     public ResponseEntity<Object> eventInSession(@PathVariable("id") UUID id)//List<Event>
     {
         List<Event> eventList = conferenceService.eventsInSession(id);
-        if(eventList != null)
-            return new ResponseEntity<>(eventList, HttpStatus.OK);
-        else
-            return new ResponseEntity<>("no session", HttpStatus.CONFLICT);
+        return new ResponseEntity<>(eventList, HttpStatus.OK);
     }
 
     @PostMapping("/addLecture")
@@ -91,9 +84,8 @@ public class ConferenceController {
 
     @GetMapping("/getLecture/{id}")
     public ResponseEntity<Map<String, Object>> getLecture(@PathVariable("id") UUID id) {
-        if(conferenceService.getJsonLecture(id).containsKey("error"))
-            return new ResponseEntity<>(conferenceService.getJsonLecture(id), HttpStatus.CONFLICT);
-        return new ResponseEntity<>(conferenceService.getJsonLecture(id), HttpStatus.CREATED);
+        Map<String, Object> json = conferenceService.getJsonLecture(id);
+        return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
     @GetMapping("/getAllConference")

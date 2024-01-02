@@ -2,8 +2,11 @@ package com.FMCSULconferencehandler.service;
 
 import com.FMCSULconferencehandler.model.Participant;
 import com.FMCSULconferencehandler.repositories.ParticipantRepository;
+import jakarta.mail.Part;
 import jakarta.transaction.Transactional;
+import org.springdoc.api.OpenApiResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -72,6 +75,7 @@ public class UserService {
         users=participantRepository.findAll();
         return users;
     }
+
 }
 //DO DOCUMENTATION
 //JSON DO TABLICY

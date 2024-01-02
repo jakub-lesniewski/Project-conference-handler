@@ -1,5 +1,6 @@
 package com.FMCSULconferencehandler.controller;
 
+import com.FMCSULconferencehandler.model.JsonResponse;
 import com.FMCSULconferencehandler.repositories.AdminRepository;
 import com.FMCSULconferencehandler.model.Admin;
 import com.FMCSULconferencehandler.model.Participant;
@@ -92,6 +93,16 @@ public class AdminController {
         response.put("user",p);
         return new ResponseEntity<>(response, HttpStatus.OK);
 
+    }
+
+    @PutMapping("/updateParticipant")
+    public ResponseEntity<JsonResponse> updateParticipant(@RequestBody Participant participant){
+        adminService.updateParticipant(participant);
+        return createSuccessJsonResponse("Participant updated");
+    }
+
+    private ResponseEntity<JsonResponse> createSuccessJsonResponse(String message) {
+        return new ResponseEntity<>(new JsonResponse(null, message), HttpStatus.OK);
     }
 }
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import RowSession from "./RowSession";
 import ModalWindow from "../../../ui/ModalWindow";
 import ModalSession from "./ModalSession";
@@ -15,9 +15,13 @@ const tableHeadRow = [
   "building",
 ];
 
-function SessionBox() {
+function SessionBox({ setSessionsData }) {
   const [sessionsArr, setSessionsArr] = useState([]);
   const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    setSessionsData(sessionsArr);
+  }, [sessionsArr]);
 
   function addSession(session) {
     setSessionsArr((prev) => [...prev, session]);

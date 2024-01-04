@@ -1,6 +1,5 @@
 import { useForm, useFieldArray } from "react-hook-form";
 import InputField from "../../../ui/InputField";
-import { useState } from "react";
 
 function ModalSession({ session, toggleModal, addSession }) {
   const { register, handleSubmit, control, watch } = useForm({

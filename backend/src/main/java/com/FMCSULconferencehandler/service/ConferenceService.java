@@ -40,12 +40,11 @@ public class ConferenceService {
 
     public void addConference(Conference conference)
     {
-        if(conferenceRepository.findAll().isEmpty()) {
+        if(checkConference(conference)) {
             conferenceRepository.save(conference);
         }
         else
         {
-
             throw new RuntimeException();
         }
     }
@@ -183,6 +182,22 @@ public class ConferenceService {
         return json;
     }
 
+    private boolean checkConference(Conference conference){
+        if(conference.getName() == null || conference.getName().isEmpty())
+            return false;
+        if(conference.getDate_start().isAfter(conference.getDate_end()))
+            return false;
+
+        List<Conference> list = conferenceRepository.findAllByOrderByDate_start();
+
+        for(int i = 0; i < list.size(); i++){
+            if(!(conference.getDate_end().isBefore(list.get(i).getDate_start()) ||
+                conference.getDate_start().isAfter(list.get(i).getDate_end())))
+                return false;
+        }
+        return true;
+    }
+
     private boolean checkSession(Session session){
         if(session.getName() == null || session.getName().isEmpty())
             return false;
@@ -204,6 +219,10 @@ public class ConferenceService {
             return false;
         if(event.getTime_start().isAfter(event.getTime_end()))
             return false;
+
+        if(event.getParticipantFk() != null)
+            if(participantRepository.findParticipantById(event.getParticipantFk()) == null)
+                return false;
 
         if(event.getSessionFk() != null){
             if(sessionRepository.findSessionById(event.getSessionFk()) == null)
@@ -448,5 +467,165 @@ public class ConferenceService {
         }
 
         conferenceRepository.deleteById(id);
+    }
+
+    public void updateSession(Session session){
+        Session updateSession = sessionRepository.findById(session.getId())
+                .orElseThrow(() -> new EmptyResultDataAccessException("Session not found" , 1));
+
+        if(!checkSession(session))
+            throw new CustomDataIntegrityViolationException("New data is invalid");
+
+        updateSession.setName(session.getName());
+        updateSession.setTime_start(session.getTime_start());
+        updateSession.setTime_end(session.getTime_end());
+        updateSession.setCity(session.getCity());
+        updateSession.setStreet(session.getStreet());
+        updateSession.setBuilding(session.getBuilding());
+        updateSession.setRoom_number(session.getRoom_number());
+
+        sessionRepository.save(updateSession);
+    }
+
+    public void updateType(Type type){
+        Type updateType = typeRepository.findById(type.getId())
+                .orElseThrow(() -> new EmptyResultDataAccessException("Type not found", 1));
+
+        if(type.getName() == null || type.getName().isEmpty())
+            throw new CustomDataIntegrityViolationException("New data is invalid");
+
+        updateType.setName(type.getName());
+        updateType.setAbbreviation(type.getAbbreviation());
+
+        typeRepository.save(updateType);
+
+    }
+
+    public void updateTitle(Title title){
+        Title updateTitle = titleRepository.findById(title.getId())
+                .orElseThrow(() -> new EmptyResultDataAccessException("Title not found", 1));
+
+        if((title.getName() == null || title.getName().isEmpty()) ||
+                (title.getAbbreviation() == null || title.getAbbreviation().isEmpty()))
+            throw new CustomDataIntegrityViolationException("New data is invalid");
+
+        updateTitle.setName(title.getName());
+        updateTitle.setAbbreviation(title.getAbbreviation());
+
+        titleRepository.save(updateTitle);
+    }
+
+    public void updateLecture(Lecture lecture){
+        Lecture updateLecture = lectureRepository.findById(lecture.getId())
+                .orElseThrow(() -> new EmptyResultDataAccessException("Lecture not found", 1));
+
+        if(lecture.getTopic() == null || lecture.getTopic().isEmpty())
+            throw new CustomDataIntegrityViolationException("New data is invalid");
+
+        Event updateEvent = eventRepository.findById(lecture.getEvent().getId())
+                .orElseThrow(() -> new EmptyResultDataAccessException("Event not found", 1));
+
+        updateLecture.setTopic(lecture.getTopic());
+        updateLecture.setAbstract(lecture.getAbstract());
+        updateLecture.setEvent(updateEvent);
+
+        lectureRepository.save(updateLecture);
+    }
+
+    public void updateEvent(Event event){
+        Event updateEvent = eventRepository.findById(event.getId())
+                .orElseThrow(() -> new EmptyResultDataAccessException("Event not found", 1));
+
+        if(!checkUpdateEvent(event))
+            throw new CustomDataIntegrityViolationException("New data is invalid");
+
+        updateEvent.setTime_start(event.getTime_start());
+        updateEvent.setTime_end(event.getTime_end());
+        updateEvent.setName(event.getName());
+        updateEvent.setAmount_of_participants(event.getAmount_of_participants());
+        updateEvent.setSessionFk(event.getSessionFk());
+        updateEvent.setParticipantFk(event.getParticipantFk());
+
+        eventRepository.save(updateEvent);
+    }
+
+    public void updateConference(Conference conference){
+        Conference updateConference = conferenceRepository.findById(conference.getId())
+                .orElseThrow(() -> new EmptyResultDataAccessException("Conference not found", 1));
+
+        if(!checkUpdateConf(conference))
+            throw new CustomDataIntegrityViolationException("New data is invalid");
+
+        updateConference.setName(conference.getName());
+        updateConference.setDate_end(conference.getDate_end());
+        updateConference.setDate_start(conference.getDate_start());
+
+        conferenceRepository.save(updateConference);
+    }
+
+    private boolean checkUpdateEvent(Event event) {
+        if(event.getTime_start() == null)
+            return false;
+        if(event.getTime_end() == null)
+            return false;
+        if(event.getName() == null || event.getName().isEmpty())
+            return false;
+        if(event.getTime_start().isAfter(event.getTime_end()))
+            return false;
+
+        if(event.getParticipantFk() != null)
+            if(participantRepository.findParticipantById(event.getParticipantFk()) == null)
+                return false;
+
+        if(event.getSessionFk() != null){
+            if(sessionRepository.findSessionById(event.getSessionFk()) == null)
+                return false;
+
+            List<Event> list = new ArrayList<>();
+
+            for(Event e : eventRepository.findBySessionFkOrderByTime_startAsc(event.getSessionFk()))
+                if(e.getSessionFk().equals(event.getSessionFk()) && e.getId() != event.getId())
+                    list.add(e);
+
+            if(list.isEmpty() && !sessionRepository.findSessionById(event.getSessionFk()).getTime_start().isAfter(event.getTime_start())
+                    && !sessionRepository.findSessionById(event.getSessionFk()).getTime_end().isBefore(event.getTime_end()))
+                return true;
+            if(!list.get(0).getTime_start().isBefore(event.getTime_end()) &&
+                    !sessionRepository.findSessionById(
+                                    event.getSessionFk())
+                            .getTime_start()
+                            .isAfter(event.getTime_start()))
+                return true;
+            if(!(list.get(list.size() - 1).getTime_end().isAfter(event.getTime_start()))
+                    && !sessionRepository.findSessionById(event.getSessionFk()).getTime_end().isBefore(event.getTime_end()))
+                return true;
+            for(int i = 0; i < list.size(); i++){
+                if(!list.get(i).getTime_end().isAfter(event.getTime_start()) &&
+                        !list.get(i).getTime_start().isBefore(event.getTime_end()))
+                    return true;
+            }
+            return false;
+        }
+        return true;
+    }
+
+    private boolean checkUpdateConf(Conference conference){
+        if(conference.getName() == null || conference.getName().isEmpty())
+            return false;
+        if(conference.getDate_start().isAfter(conference.getDate_end()))
+            return false;
+
+
+        List<Conference> list = new ArrayList<>();
+
+        for(Conference c : conferenceRepository.findAllByOrderByDate_start())
+            if(c.getId() != conference.getId())
+                list.add(c);
+
+        for(int i = 0; i < list.size(); i++)
+            if(!(conference.getDate_end().isBefore(list.get(i).getDate_start()) ||
+                    conference.getDate_start().isAfter(list.get(i).getDate_end())))
+                return false;
+        return true;
     }
 }

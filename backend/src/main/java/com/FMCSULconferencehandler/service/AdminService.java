@@ -1,12 +1,17 @@
 package com.FMCSULconferencehandler.service;
 
 import com.FMCSULconferencehandler.model.Admin;
+import com.FMCSULconferencehandler.model.Participant;
 import com.FMCSULconferencehandler.model.Session;
 import com.FMCSULconferencehandler.repositories.AdminRepository;
+import com.FMCSULconferencehandler.repositories.ParticipantRepository;
+import com.FMCSULconferencehandler.repositories.TitleRepository;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.Random;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import static com.FMCSULconferencehandler.controller.sha.Hashes.hashSHA512;
@@ -14,9 +19,11 @@ import static com.FMCSULconferencehandler.controller.sha.Hashes.hashSHA512;
 @Service
 public class AdminService {
     private AdminRepository adminRepository;
+    private ParticipantRepository participantRepository;
 
-    public AdminService(AdminRepository adminRepository){
+    public AdminService(AdminRepository adminRepository, ParticipantRepository participantRepository){
         this.adminRepository = adminRepository;
+        this.participantRepository = participantRepository;
     }
 
     public boolean saveAdmin(Admin reqAdmin) {
@@ -64,5 +71,22 @@ public class AdminService {
         return Pattern.compile("^[A-Za-z0-9._-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}$")
                 .matcher(mail)
                 .matches();
+    }
+
+    public void updateParticipant(Participant participant){
+        Participant updateParticipant = participantRepository.findById(participant.getId())
+                .orElseThrow(() -> new EmptyResultDataAccessException("Participant not found" , 1));
+
+        if(!(checkMail(participant.getEmail()) && checkName(participant.getName()) &&
+                checkName(participant.getSurname()) && participant.getPassword() != null && participant.getPassword().length() >= 4))
+            throw new CustomDataIntegrityViolationException("New data is invalid");
+
+        updateParticipant.setName(participant.getName());
+        updateParticipant.setSurname(participant.getSurname());
+        updateParticipant.setEmail(participant.getEmail());
+        updateParticipant.setPassword(hashSHA512(participant.getPassword()));
+        updateParticipant.setAffiliation(participant.getAffiliation());
+
+        participantRepository.save(updateParticipant);
     }
 }

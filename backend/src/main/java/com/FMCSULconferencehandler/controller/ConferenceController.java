@@ -29,7 +29,7 @@ public class ConferenceController {
         catch (RuntimeException e)
         {
             Map<String,String> map=new HashMap<>();
-            map.put("error","conference already exist");
+            map.put("error","cannot add conference");
             return new ResponseEntity<>(map, HttpStatus.FORBIDDEN);
         }
 
@@ -183,6 +183,42 @@ public class ConferenceController {
 
         conferenceService.deleteConference(conferenceID);
         return createSuccessJsonResponse("Conference deleted");
+    }
+
+    @PutMapping("/updateSession")
+    private ResponseEntity<JsonResponse> updateSession(@RequestBody Session session){
+        conferenceService.updateSession(session);
+        return createSuccessJsonResponse("Session updated");
+    }
+
+    @PutMapping("/updateType")
+    private ResponseEntity<JsonResponse> updateType(@RequestBody Type type){
+        conferenceService.updateType(type);
+        return createSuccessJsonResponse("Type update");
+    }
+
+    @PutMapping("/updateTitle")
+    private ResponseEntity<JsonResponse> updateTitle(@RequestBody Title title){
+        conferenceService.updateTitle(title);
+        return createSuccessJsonResponse("Title updated");
+    }
+
+    @PutMapping("/updateLecture")
+    private ResponseEntity<JsonResponse> updateLecture(@RequestBody Lecture lecture){
+        conferenceService.updateLecture(lecture);
+        return createSuccessJsonResponse("Lecture updated");
+    }
+
+    @PutMapping("/updateEvent")
+    private ResponseEntity<JsonResponse> updateEvent(@RequestBody Event event){
+        conferenceService.updateEvent(event);
+        return createSuccessJsonResponse("Event updated");
+    }
+
+    @PutMapping("/updateConference")
+    private ResponseEntity<JsonResponse> updateConference(@RequestBody Conference conference){
+        conferenceService.updateConference(conference);
+        return createSuccessJsonResponse("Conference updated");
     }
 
     private ResponseEntity<JsonResponse> createSuccessJsonResponse(String message) {

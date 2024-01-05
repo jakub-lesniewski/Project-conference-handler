@@ -1,14 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ModalWindow from "../../../ui/ModalWindow";
 import ModalAtendee from "./ModalAtendee";
 import RowAtendee from "./RowAtendee";
 
 const tableHeadRow = ["id", "name", "email", "affiliation"];
 
-function AtendeesBox() {
+function AtendeesBox({ setAtendeesData }) {
   const [atendeesArr, setAtendeesArr] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedAtendee, setSelectedAtendee] = useState(null);
+
+  useEffect(() => {
+    setAtendeesData(atendeesArr);
+  }, [atendeesArr]);
 
   function modifyAtendee(atendee) {
     setSelectedAtendee(atendee);

@@ -3,7 +3,7 @@ import ModalWindow from "../../../ui/ModalWindow";
 import ModalAtendee from "./ModalAtendee";
 import RowAtendee from "./RowAtendee";
 
-const tableHeadRow = ["id", "name", "email", "affiliation"];
+const tableHeadRow = ["id", "name", "surname", "email", "affiliation"];
 
 function AtendeesBox({ setAtendeesData }) {
   const [atendeesArr, setAtendeesArr] = useState([]);

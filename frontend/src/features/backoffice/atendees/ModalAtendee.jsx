@@ -8,7 +8,8 @@ function ModalAtendee({ toggleModal, atendee, setAtendeesArr }) {
   function onSubmit(data) {
     const newAtendee = {
       id: generateRandomID(),
-      name: data.fullName,
+      name: data.name,
+      surname: data.surname,
       email: data.email,
       affiliation: data.affiliation,
     };
@@ -35,10 +36,18 @@ function ModalAtendee({ toggleModal, atendee, setAtendeesArr }) {
       <div className="grid-cols2 grid gap-5">
         <InputField
           defaultValue={atendee?.name}
-          label="Full Name"
-          name="fullName"
-          placeholder="John Doe"
+          label="Name"
+          name="name"
+          placeholder="John"
           register={register}
+        />
+
+        <InputField
+            defaultValue={atendee?.surname}
+            label="Surname"
+            name="surname"
+            placeholder="Doe"
+            register={register}
         />
 
         <InputField

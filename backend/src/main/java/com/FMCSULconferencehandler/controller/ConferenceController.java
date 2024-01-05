@@ -1,6 +1,8 @@
 package com.FMCSULconferencehandler.controller;
 
 import com.FMCSULconferencehandler.model.*;
+import com.FMCSULconferencehandler.model.reqModel.ConferenceRequest;
+import com.FMCSULconferencehandler.model.reqModel.ParticipantToEventDTO;
 import com.FMCSULconferencehandler.service.ConferenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +21,12 @@ public class ConferenceController {
         this.conferenceService = conferenceService;
     }
 
+    @PostMapping("/addAllConference")
+    public ResponseEntity<JsonResponse> addAllConference(@RequestBody ConferenceRequest request) {
+        conferenceService.addAllConference(request.getAtendeesArr(),request.getSessionsArr(),request.getEventsArr());
+        return createSuccessJsonResponse("conference created");
+
+    }
     @PostMapping("/addConference")
     public ResponseEntity<Object> addConference(@RequestBody Conference conference)
     {
@@ -81,13 +89,13 @@ public class ConferenceController {
             return new ResponseEntity<>("no session", HttpStatus.CONFLICT);
     }
 
-    @PostMapping("/addLecture")
-    public ResponseEntity<Object> addLecture(@RequestBody LectureRequest lecture) {
-        Lecture lecture1=conferenceService.addLecture(lecture);
-        if(lecture1 == null)
-            return new ResponseEntity<>("error", HttpStatus.CONFLICT);
-        return new ResponseEntity<>(lecture1, HttpStatus.CREATED);
-    }
+//    @PostMapping("/addLecture")
+//    public ResponseEntity<Object> addLecture(@RequestBody LectureRequest lecture) {
+//        Lecture lecture1=conferenceService.addLecture(lecture);
+//        if(lecture1 == null)
+//            return new ResponseEntity<>("error", HttpStatus.CONFLICT);
+//        return new ResponseEntity<>(lecture1, HttpStatus.CREATED);
+//    }
 
     @GetMapping("/getLecture/{id}")
     public ResponseEntity<Map<String, Object>> getLecture(@PathVariable("id") UUID id) {

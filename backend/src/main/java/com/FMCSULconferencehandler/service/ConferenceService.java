@@ -125,30 +125,31 @@ public class ConferenceService {
         return false;
     }
 
-    public void addParticipantToEvent( UUID event_ID,UUID participant_id)
+    public void addAttendee(UUID event_ID, UUID participant_id)
     {
         Event event = eventRepository.findById(event_ID).orElseThrow(() -> new EmptyResultDataAccessException("Event not found", 1));
         Participant participant=participantRepository.findById(participant_id).orElseThrow(() -> new EmptyResultDataAccessException("participant not found", 1));
 
         event.setAmount_of_participants(event.getAmount_of_participants()+1);
 
-        Attendee attendanceEvent=new Attendee(event,participant);
-        eventRepository.save(event);
+        Attendee attendee = new Attendee(event,participant);
 
-        attendeeRepository.save(attendanceEvent);
+        eventRepository.save(event);
+        attendeeRepository.save(attendee);
     }
     public List<Event> participantEvent(UUID id)
     {
-        if(participantRepository.findParticipantById(id) == null)
-            return null;
-
+        if (!participantRepository.existsById(id)) {
+            throw new EmptyResultDataAccessException("Participant not found", 1);
+        }
         return attendeeRepository.findEventByParticipantId(id);
     }
 
     public List<Event> eventsInSession(UUID id)
     {
-        if(sessionRepository.findSessionById(id) == null)
-            return null;
+        if (!sessionRepository.existsById(id)) {
+            throw new EmptyResultDataAccessException("Session not found", 1);
+        }
         return eventRepository.findBySessionFk(id);
     }
 //    @Transactional

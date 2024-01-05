@@ -1,4 +1,4 @@
-package com.FMCSULconferencehandler.model;
+package com.FMCSULconferencehandler.model.reqModel;
 
 import java.util.UUID;
 

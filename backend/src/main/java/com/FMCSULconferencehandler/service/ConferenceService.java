@@ -2,8 +2,9 @@ package com.FMCSULconferencehandler.service;
 
 
 import com.FMCSULconferencehandler.model.*;
+import com.FMCSULconferencehandler.model.reqModel.LectureRequest;
+import com.FMCSULconferencehandler.model.reqModel.SessionReq;
 import com.FMCSULconferencehandler.repositories.*;
-import com.fasterxml.jackson.databind.introspect.TypeResolutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+
+import static com.FMCSULconferencehandler.controller.sha.Hashes.hashSHA512;
 
 @Service
 public class ConferenceService {
@@ -24,9 +27,10 @@ public class ConferenceService {
     private final ConferenceRepository conferenceRepository;
     private final TypeRepository typeRepository;
     private final TitleRepository titleRepository;
+    private final AdminService adminService;
     private static final Logger LOGGER = LoggerFactory.getLogger(ConferenceService.class);
 
-    public ConferenceService(SessionRepository sessionRepository, ConferenceRepository conferenceRepository, LecturerRepository lecturerRepository, LectureRepository lectureRepository, EventRepository eventRepository, AttendeeRepository attendeeRepository, ParticipantRepository participantRepository, TypeRepository typeRepository, TitleRepository titleRepository) {
+    public ConferenceService(SessionRepository sessionRepository, ConferenceRepository conferenceRepository, LecturerRepository lecturerRepository, LectureRepository lectureRepository, EventRepository eventRepository, AttendeeRepository attendeeRepository, ParticipantRepository participantRepository, TypeRepository typeRepository, TitleRepository titleRepository,AdminService adminService) {
         this.sessionRepository = sessionRepository;
         this.eventRepository = eventRepository;
         this.attendeeRepository = attendeeRepository;
@@ -36,6 +40,58 @@ public class ConferenceService {
         this.conferenceRepository=conferenceRepository;
         this.typeRepository=typeRepository;
         this.titleRepository=titleRepository;
+        this.adminService = adminService;
+    }
+
+    @Transactional
+    public void addAllConference(Participant[] participants, SessionReq[] sessionReqs, Event[] eventsArr)
+    {
+        for(Participant participant:participants) {
+            if (adminService.checkMail(participant.getEmail())) {
+                //brak sprawdzania czy juz jest w bazie (email unique)
+                participant.setPassword(adminService.passwordGenerate());
+                participant.setPassword(hashSHA512(participant.getPassword()));
+                participantRepository.save(participant);
+            }
+        }
+        for(SessionReq session: sessionReqs) {
+            Session newSession = new Session(session.getName(), session.getStartingDate(),
+                    session.getEndingDate(), session.getCity(),
+                    session.getStreet(), session.getBuilding(),
+                    session.getRoom());
+            sessionRepository.save(newSession);
+            for(LectureRequest lecture: session.getEventsArr()) {
+                Event event = new Event(lecture.getStartingDate(),lecture.getEndingDate()
+                        ,lecture.getName(),newSession.getId());
+
+//                if(!checkEvent(event))
+//                    return ;
+
+                eventRepository.save(event);
+
+                if(!lecture.getLecturers().isEmpty()) {
+                    Lecture lecture1 = new Lecture(lecture.getName(), lecture.get_abstract(), event);
+                    List<String> emailSpeakers = lecture.getLecturers();
+                    for (String email : emailSpeakers) {
+                        if (participantRepository.findParticipantByEmail(email) == null)
+                            return;
+                    }
+                    lectureRepository.save(lecture1);
+                    for (String email : emailSpeakers) {
+                        addSpeakerToLecture(lecture1.getId(),
+                                participantRepository.findParticipantByEmail(email)
+                                .orElseThrow(()->new EmptyResultDataAccessException("participant not found",1))
+                                .getId());
+                    }
+                }
+            }
+        }
+        if(eventsArr!=null) {
+            for (Event event : eventsArr) {
+                eventRepository.save(event);
+            }
+        }
+
     }
 
     public void addConference(Conference conference)
@@ -96,38 +152,40 @@ public class ConferenceService {
         }
         return eventRepository.findBySessionFk(id);
     }
-    @Transactional
-    public Lecture addLecture(LectureRequest lecture)
-    {
-        Event event = new Event(lecture.getTime_start(),lecture.getTime_end()
-                ,lecture.getName(),lecture.getSession_fk());
-
-        if(sessionRepository.findSessionById(lecture.getSession_fk()) == null)
-            return null;
-
-        if(!checkEvent(event))
-            return null;
-
-        if(lecture.getTopic() == null || lecture.getTopic().isEmpty())
-            return null;
-
-        Lecture lecture1=new Lecture(lecture.getTopic(),lecture.getAbstract(),event);
-
-        List<UUID> idSpeakers=lecture.getIdSpeakers();
-        for(UUID id :idSpeakers) {
-            if(participantRepository.findParticipantById(id) == null)
-                return null;
-        }
-
-        eventRepository.save(event);
-        lectureRepository.save(lecture1);
-        for(UUID id :idSpeakers)
-        {
-            addSpeakerToLecture(lecture1.getId(),id);
-        }
-
-        return lecture1;
-    }
+//    @Transactional
+//    public Lecture addLecture(LectureRequest lecture)
+//    {
+//        Event event = new Event(lecture.getStartingDate(),lecture.getEndingDate()
+//                ,lecture.getName(),lecture.getSession_fk());
+//
+//        if(sessionRepository.findSessionById(lecture.getSession_fk()) == null)
+//            return null;
+//
+//        if(!checkEvent(event))
+//            return null;
+//
+//        if(lecture.getTopic() == null || lecture.getTopic().isEmpty())
+//            return null;
+//
+//        eventRepository.save(event);
+//        if(!lecture.getLecturers().isEmpty()) {
+//            Lecture lecture1 = new Lecture(lecture.getTopic(), lecture.getAbstract(), event);
+//
+//            List<String> emailSpeakers = lecture.getLecturers();
+//            for (String email : emailSpeakers) {
+//                if (participantRepository.findParticipantByEmail(email) == null)
+//                    return null;
+//            }
+//
+//            lectureRepository.save(lecture1);
+//            for (String email : emailSpeakers) {
+//                addSpeakerToLecture(lecture1.getId(), participantRepository.findParticipantByEmail(email).get(0).getId());
+//            }
+//
+//            return lecture1;
+//        }
+//        return null;
+//    }
 
     public Map<String,Object>getJsonLecture(UUID id)
     {

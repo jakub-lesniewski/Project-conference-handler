@@ -27,12 +27,10 @@ public class Lecture{
 
 
 
-    public Lecture( String topic, String Abstract,Event event) {
-
+    public Lecture(String topic, String Abstract,Event event) {
         this.topic = topic;
         this.Abstract = Abstract;
         this.event = event;
-
     }
 
 

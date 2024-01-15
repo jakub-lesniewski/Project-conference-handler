@@ -2,10 +2,10 @@ function TableHead() {
   const TABLE_HEADERS = ["name", "surname", "email", "affiliation", ""];
 
   return (
-    <thead>
-      <tr className="border border-fmcsBlack text-sm">
+    <thead className="text-xs text-fmcsBlack">
+      <tr>
         {TABLE_HEADERS.map((tableHeader, i) => (
-          <th key={i} className="px-4 py-2 text-left">
+          <th scope="col" key={i} className="px-4 py-3">
             {tableHeader}
           </th>
         ))}

@@ -6,22 +6,21 @@ function AttendeeElement({ attendee, handleSetCurrentAttendee }) {
 
   return (
     <tr
-      className="cursor-pointer border border-fmcsBlack transition-all duration-200 hover:bg-fmcsGray"
+      className="cursor-pointer border-t-2 hover:bg-fmcsWhite"
       onClick={() => handleSetCurrentAttendee(attendee)}
     >
-      <td className="min-w-40 px-4 py-2">{name}</td>
-      <td className="w-40 px-4 py-2">{surname}</td>
-      <td className="w-60 px-4 py-2">{email}</td>
-      <td className="w-40 px-4 py-2">{affiliation}</td>
-      <td className="px-2 transition-all duration-200 hover:bg-fmcsRed hover:text-fmcsWhite">
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            removeAttendee(id);
-          }}
-        >
-          remove
-        </button>
+      <td className="p-4">{name}</td>
+      <td className="p-4">{surname}</td>
+      <td className="p-4">{email}</td>
+      <td className="p-4">{affiliation}</td>
+      <td
+        onClick={(e) => {
+          e.stopPropagation();
+          removeAttendee(id);
+        }}
+        className="px-3 py-4 text-center transition-all duration-200 hover:bg-fmcsRed hover:text-fmcsWhite"
+      >
+        <p>remove</p>
       </td>
     </tr>
   );

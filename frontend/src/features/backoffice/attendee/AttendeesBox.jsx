@@ -4,7 +4,6 @@ import AttendeeElement from "./AttendeeElement";
 import ModalWindow from "../../../ui/ModalWindow";
 import TableHead from "./TableHead";
 import AttendeeForm from "./AttendeeForm";
-import Button from "../../../ui/Button";
 
 function AttendeesBox() {
   const { attendeesArr } = useBackofficeContext();
@@ -26,8 +25,8 @@ function AttendeesBox() {
 
   return (
     <section className="m-4">
-      <div className="rouned-lg">
-        <table className="mb-4 table-auto text-fmcsBlack shadow-md">
+      <div className="relative overflow-x-auto rounded-lg shadow-md">
+        <table className="w-full border-4 border-opacity-70 text-left text-sm text-fmcsBlack rtl:text-right">
           <TableHead />
 
           <tbody>
@@ -42,7 +41,12 @@ function AttendeesBox() {
         </table>
       </div>
 
-      <Button onClick={handleToggleModal}>add attendee</Button>
+      <button
+        className="ml-2 mt-2 inline-flex rounded-md border border-fmcsGreen bg-fmcsGreen p-2 text-fmcsWhite transition-all duration-200 hover:bg-fmcsWhite hover:text-fmcsGreen"
+        onClick={handleToggleModal}
+      >
+        add attendee
+      </button>
 
       {toggleModal && (
         <ModalWindow onClose={handleToggleModal}>

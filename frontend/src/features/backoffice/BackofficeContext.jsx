@@ -7,7 +7,14 @@ export function useBackofficeContext() {
 }
 
 export function BackofficeProvider({ children }) {
-  const [attendeesArr, setAttendeesArr] = useState([]);
+  const [attendeesArr, setAttendeesArr] = useState([
+    {
+      name: "John",
+      surname: "Dough",
+      email: "johndoe@example.com",
+      affiliation: "University of Foo",
+    },
+  ]);
   const [timelineArr, setTimelineArr] = useState([]);
 
   function addAttendee(newAttendee) {

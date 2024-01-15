@@ -12,6 +12,10 @@ function AttendeesBox() {
   const [currentAttendee, setCurrentAttendee] = useState(null);
 
   function handleToggleModal() {
+    console.log(currentAttendee);
+    if (toggleModal === true) {
+      setCurrentAttendee(null);
+    }
     setToggleModal(!toggleModal);
   }
 

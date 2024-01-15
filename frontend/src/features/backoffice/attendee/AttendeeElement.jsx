@@ -13,10 +13,12 @@ function AttendeeElement({ attendee, handleSetCurrentAttendee }) {
       <td className="w-40 px-4 py-2">{surname}</td>
       <td className="w-60 px-4 py-2">{email}</td>
       <td className="w-40 px-4 py-2">{affiliation}</td>
-      <td>
+      <td className="px-2 transition-all duration-200 hover:bg-fmcsRed hover:text-fmcsWhite">
         <button
-          onClick={() => removeAttendee(id)}
-          className="px-4 py-2 transition-all duration-200 hover:bg-fmcsRed hover:text-fmcsWhite"
+          onClick={(e) => {
+            e.stopPropagation();
+            removeAttendee(id);
+          }}
         >
           remove
         </button>

@@ -3,7 +3,7 @@ function TableHead() {
 
   return (
     <thead>
-      <tr className="border border-black bg-fmcsGray text-sm">
+      <tr className="border border-fmcsBlack text-sm">
         {TABLE_HEADERS.map((tableHeader, i) => (
           <th key={i} className="px-4 py-2 text-left">
             {tableHeader}

@@ -16,7 +16,6 @@ function TimelineBox() {
     if (toggleEventModal === true) {
       setCurrentTimelineElement(null);
     }
-
     setToggleEventModal(!toggleEventModal);
   }
 
@@ -29,7 +28,13 @@ function TimelineBox() {
 
   function handleSetCurrentTimelineElement(timelineElement) {
     setCurrentTimelineElement(timelineElement);
-    handleToggleEventModal();
+    console.log(timelineElement);
+
+    if (!timelineElement.room) {
+      handleToggleEventModal();
+    } else {
+      handleToggleSessionModal();
+    }
   }
 
   return (

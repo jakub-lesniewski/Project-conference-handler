@@ -19,10 +19,10 @@ function TimelineElement({ timelineElement, handleSetCurrentTimelineElement }) {
       onClick={() => handleSetCurrentTimelineElement(timelineElement)}
     >
       <td className="p-4">{name}</td>
-      <td className="p-4">{room}</td>
-      <td className="p-4">{attendeeLimit}</td>
-      <td className="p-4">{building}</td>
-      <td className="p-4">{street}</td>
+      <td className="p-4">{room || "---"}</td>
+      <td className="p-4">{attendeeLimit || "---"}</td>
+      <td className="p-4">{building || "---"}</td>
+      <td className="p-4">{street || "---"}</td>
       <td className="p-4">{dateStart}</td>
       <td className="p-4">{dateEnd}</td>
       <td

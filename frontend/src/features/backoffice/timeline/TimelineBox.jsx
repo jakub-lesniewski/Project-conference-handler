@@ -3,8 +3,8 @@ import { useState } from "react";
 import TableHead from "../TableHead";
 import ModalWindow from "../../../ui/ModalWindow";
 import TimelineElement from "./TimelineElement";
-import EventForm from "./EventForm";
-import SessionForm from "./SessionForm";
+import EventForm from "./events/EventForm";
+import SessionForm from "./sessions/SessionForm";
 
 function TimelineBox() {
   const { timelineArr } = useBackofficeContext();

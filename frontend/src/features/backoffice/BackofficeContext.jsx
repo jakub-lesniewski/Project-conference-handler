@@ -37,11 +37,21 @@ export function BackofficeProvider({ children }) {
       dateEnd: "2001-01-02T09:10",
       eventsArr: [
         {
+          id: "321",
+          type: "lecture",
           abstract: "abstract.pdf",
           name: "Kapłony i Szczerzuje",
           dateStart: "2001-01-02T01:45",
           dateEnd: "2001-01-02T01:55",
           lecturers: "kowal@example.com",
+        },
+        {
+          id: "654",
+          type: "event",
+          name: "Question break",
+          dateStart: "2001-01-02T01:45",
+          dateEnd: "2001-01-02T01:55",
+          leadEmail: "kowal@example.com",
         },
       ],
     },

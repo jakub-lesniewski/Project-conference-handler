@@ -17,6 +17,8 @@ function InputField({
         type={type}
         className="rounded-md border-2 px-2 py-1 transition-all duration-300 focus:border-fmcsGreen focus:outline-none focus:ring-fmcsGreen"
         autoFocus={autoFocus}
+        min="0"
+        max="500"
         required
       />
     </div>

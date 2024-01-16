@@ -1,7 +1,22 @@
+import React, { useEffect } from "react";
+
 function ModalWindow({ children, onClose }) {
   function handleCloseClick() {
     onClose();
   }
+
+  function handleEscapeKey(event) {
+    if (event.key === "Escape") {
+      onClose();
+    }
+  }
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleEscapeKey);
+    return () => {
+      document.removeEventListener("keydown", handleEscapeKey);
+    };
+  }, []);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-brightness-50">

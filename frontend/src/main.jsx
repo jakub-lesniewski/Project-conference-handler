@@ -3,7 +3,7 @@ import { AuthProvider } from "./utils/auth";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import LandingLayout from "./features/login/LandingLayout";
-import Backoffice from "./features/backoffice/backoffice";
+import Backoffice from "./features/backoffice/Backoffice";
 import ErrorPage from "./ui/ErrorPage";
 import Login from "./features/login/Login";
 import User, { loader as userLoader } from "./features/user/User";

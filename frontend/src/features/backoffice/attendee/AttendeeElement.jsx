@@ -6,7 +6,7 @@ function AttendeeElement({ attendee, handleSetCurrentAttendee }) {
 
   return (
     <tr
-      className="cursor-pointer border-t-2 hover:bg-fmcsWhite"
+      className="cursor-pointer border-t-2 transition-all duration-200 hover:bg-fmcsWhite"
       onClick={() => handleSetCurrentAttendee(attendee)}
     >
       <td className="p-4">{name}</td>

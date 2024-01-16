@@ -19,7 +19,6 @@ function AttendeeForm({ currentAttendee, handleToggleModal }) {
         email: data.email,
         affiliation: data.affiliation,
       };
-
       addAttendee(newAttendee);
     }
     handleToggleModal();

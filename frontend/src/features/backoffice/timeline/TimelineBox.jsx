@@ -28,7 +28,6 @@ function TimelineBox() {
 
   function handleSetCurrentTimelineElement(timelineElement) {
     setCurrentTimelineElement(timelineElement);
-    console.log(timelineElement);
 
     if (!timelineElement.room) {
       handleToggleEventModal();

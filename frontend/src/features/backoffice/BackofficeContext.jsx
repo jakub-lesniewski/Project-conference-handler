@@ -29,13 +29,13 @@ export function BackofficeProvider({ children }) {
       id: "789",
       name: "De revolutionibus orbium coelestium",
       room: "C201",
-      building: "FMCS UŁ",
+      building: "Faculty of Mathematic and Computer Science UŁ",
       street: "Stefana Banacha 22",
       attendeeLimit: "50",
       city: "Łódź",
       dateStart: "2001-01-02T01:45",
       dateEnd: "2001-01-02T09:10",
-      eventsArr: [
+      sessionEventsArr: [
         {
           id: "321",
           type: "lecture",

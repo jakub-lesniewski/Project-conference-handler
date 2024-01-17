@@ -1,5 +1,5 @@
 import AttendeesBox from "./attendee/AttendeesBox";
-import TimelineBox from "./timeline/timelineBox";
+import TimelineBox from "./timeline/TimelineBox";
 
 function Backoffice() {
   return (

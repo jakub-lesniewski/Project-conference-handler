@@ -3,6 +3,7 @@ import { useBackofficeContext } from "../../BackofficeContext";
 import { v4 as uuidv4 } from "uuid";
 import InputField from "../../../../ui/InputField";
 import Button from "../../../../ui/Button";
+import { useState } from "react";
 
 function EventForm({ currentTimelineElement, handleToggleEventModal }) {
   const { register, handleSubmit } = useForm();

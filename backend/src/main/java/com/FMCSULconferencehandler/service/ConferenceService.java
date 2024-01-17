@@ -67,7 +67,7 @@ public class ConferenceService {
                         ,lecture.getName(),newSession.getId());
 
                 if(!checkEvent(event)) {
-                    throw new DataIntegrityViolationException("Event not found");
+                    throw new DataIntegrityViolationException("Event check failed");
                 }
 
                 eventRepository.save(event);
@@ -77,14 +77,14 @@ public class ConferenceService {
                     List<String> emailSpeakers = lecture.getLecturers();
                     for (String email : emailSpeakers) {
                         if (participantRepository.findParticipantByEmail(email).isEmpty()){
-                            throw new DataIntegrityViolationException("Participant not found");
+                            throw new DataIntegrityViolationException("Account with email: " + email + "not found");
                         }
                     }
                     lectureRepository.save(lecture1);
                     for (String email : emailSpeakers) {
                         addSpeakerToLecture(lecture1.getId(),
                                 participantRepository.findParticipantByEmail(email)
-                                .orElseThrow(()->new EmptyResultDataAccessException("participant not found",1))
+                                .orElseThrow(()->new EmptyResultDataAccessException("Account with email: " + email + "not found",1))
                                 .getId());
                     }
                 }

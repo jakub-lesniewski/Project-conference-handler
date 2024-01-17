@@ -1,6 +1,8 @@
 package com.FMCSULconferencehandler.controller;
 
 import com.FMCSULconferencehandler.model.*;
+import com.FMCSULconferencehandler.model.reqModel.ConferenceRequest;
+import com.FMCSULconferencehandler.model.reqModel.ParticipantToEventDTO;
 import com.FMCSULconferencehandler.service.ConferenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +21,12 @@ public class ConferenceController {
         this.conferenceService = conferenceService;
     }
 
+    @PostMapping("/addAllConference")
+    public ResponseEntity<JsonResponse> addAllConference(@RequestBody ConferenceRequest request) {
+        conferenceService.addAllConference(request.getAtendeesArr(),request.getSessionsArr(),request.getEventsArr());
+        return createSuccessJsonResponse("conference created");
+
+    }
     @PostMapping("/addConference")
     public ResponseEntity<Object> addConference(@RequestBody Conference conference)
     {
@@ -53,47 +61,39 @@ public class ConferenceController {
     }
 
     @PostMapping ("/participantToEvent")
-    public ResponseEntity<Map<String, String>> addParticipantToEvent(@RequestBody ParticipantToEventDTO dto)
+    public ResponseEntity<JsonResponse> addAttendee(@RequestBody ParticipantToEventDTO dto)
     {
-        Map<String, String> object = new HashMap<>();
-        conferenceService.addParticipantToEvent(dto.getIdEvent(),dto.getIdParticipant());
-
-        object.put("success", "participant added");
-        return new ResponseEntity<>(object, HttpStatus.OK);
+        conferenceService.addAttendee(dto.getIdEvent(),dto.getIdParticipant());
+        return createSuccessJsonResponse("participant added");
     }
 
 
     @GetMapping("/attendance/{id}")
     public ResponseEntity<Object> eventsForParticipants(@PathVariable("id") UUID id)
     {
-        if(conferenceService.participantEvent(id) == null)
-            return new ResponseEntity<>("user not found", HttpStatus.CONFLICT);
-        return new  ResponseEntity<>(conferenceService.participantEvent(id),HttpStatus.OK);
+        List<Event> events = conferenceService.participantEvent(id);
+        return new ResponseEntity<>(events, HttpStatus.OK);
     }
 
     @GetMapping("/eventInSession/{id}")
     public ResponseEntity<Object> eventInSession(@PathVariable("id") UUID id)//List<Event>
     {
         List<Event> eventList = conferenceService.eventsInSession(id);
-        if(eventList != null)
-            return new ResponseEntity<>(eventList, HttpStatus.OK);
-        else
-            return new ResponseEntity<>("no session", HttpStatus.CONFLICT);
+        return new ResponseEntity<>(eventList, HttpStatus.OK);
     }
 
-    @PostMapping("/addLecture")
-    public ResponseEntity<Object> addLecture(@RequestBody LectureRequest lecture) {
-        Lecture lecture1=conferenceService.addLecture(lecture);
-        if(lecture1 == null)
-            return new ResponseEntity<>("error", HttpStatus.CONFLICT);
-        return new ResponseEntity<>(lecture1, HttpStatus.CREATED);
-    }
+//    @PostMapping("/addLecture")
+//    public ResponseEntity<Object> addLecture(@RequestBody LectureRequest lecture) {
+//        Lecture lecture1=conferenceService.addLecture(lecture);
+//        if(lecture1 == null)
+//            return new ResponseEntity<>("error", HttpStatus.CONFLICT);
+//        return new ResponseEntity<>(lecture1, HttpStatus.CREATED);
+//    }
 
     @GetMapping("/getLecture/{id}")
     public ResponseEntity<Map<String, Object>> getLecture(@PathVariable("id") UUID id) {
-        if(conferenceService.getJsonLecture(id).containsKey("error"))
-            return new ResponseEntity<>(conferenceService.getJsonLecture(id), HttpStatus.CONFLICT);
-        return new ResponseEntity<>(conferenceService.getJsonLecture(id), HttpStatus.CREATED);
+        Map<String, Object> json = conferenceService.getJsonLecture(id);
+        return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
     @GetMapping("/getAllConference")

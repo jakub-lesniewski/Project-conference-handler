@@ -1,19 +1,42 @@
 import { useForm } from "react-hook-form";
 import { useBackofficeContext } from "../../BackofficeContext";
+import { v4 as uuidv4 } from "uuid";
 import InputField from "../../../../ui/InputField";
 import SelectField from "../../../../ui/SelectField";
+import Button from "../../../../ui/Button";
 
-function SessionEventForm({ currentSessionEvent }) {
+function SessionEventForm({
+  currentSessionEvent,
+  addSessionEvent,
+  modifySessionEvent,
+  handleToggleModal,
+}) {
   const { register, handleSubmit, watch } = useForm({
     defaultValues: {
       type: currentSessionEvent?.abstract ? "lecture" : "event",
     },
   });
   const { attendeesArr } = useBackofficeContext();
-  console.log(attendeesArr);
 
   function onSubmit(data) {
-    console.log(data);
+    if (currentSessionEvent) {
+      modifySessionEvent(currentSessionEvent.id, data);
+    } else {
+      const newEvent = {
+        id: uuidv4(),
+        type: data.type,
+        name: data.name,
+        timeStart: data.timeStart,
+        timeEnd: data.timeEnd,
+      };
+
+      if (data.type === "lecture") {
+        newEvent.abstract = data.abstract;
+        newEvent.headLead = data.headLead;
+      }
+      addSessionEvent(newEvent);
+    }
+    handleToggleModal();
   }
 
   const TYPE_OPTIONS = ["lecture", "event"];
@@ -66,7 +89,7 @@ function SessionEventForm({ currentSessionEvent }) {
         label="start time:"
         name="timeStart"
         type="time"
-        defaultValue={currentSessionEvent?.dateStart || "10:00"}
+        defaultValue={currentSessionEvent?.timeStart}
         register={register}
         required={true}
       />
@@ -74,10 +97,12 @@ function SessionEventForm({ currentSessionEvent }) {
         label="end time:"
         name="timeEnd"
         type="time"
-        defaultValue={currentSessionEvent?.dateEnd || "12:00"}
+        defaultValue={currentSessionEvent?.timeEnd}
         register={register}
         required={true}
       />
+
+      <Button type="submit">submit</Button>
     </form>
   );
 }

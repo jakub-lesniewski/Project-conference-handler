@@ -14,11 +14,15 @@ function SessionForm({ currentTimelineElement, handleToggleSessionModal }) {
   const [currentSessionEvent, setCurrentSessionEvent] = useState(null);
   const [toggleModal, setToggleModal] = useState(false);
   const [sessionEventsArr, setSessionEventsArr] = useState(
-    currentTimelineElement.sessionEventsArr || [],
+    currentTimelineElement?.sessionEventsArr || [],
   );
 
   function addSessionEvent(event) {
     setSessionEventsArr([...sessionEventsArr, event]);
+  }
+
+  function removeSessionEventArr(id) {
+    setSessionEventsArr((prev) => prev.filter((event) => event.id !== id));
   }
 
   function modifySessionEvent(id, updatedInfo) {
@@ -131,11 +135,12 @@ function SessionForm({ currentTimelineElement, handleToggleSessionModal }) {
 
         <div className="flex flex-col justify-between">
           <ul className="h-[300px] w-[800px] overflow-y-scroll rounded-lg border-4">
-            {currentTimelineElement?.eventsArr?.map((event) => (
+            {sessionEventsArr.map((event) => (
               <SessionEventArrayElement
                 key={event.id}
                 event={event}
                 handleSetCurrentEvent={handleSetCurrentEvent}
+                removeSessionEventArr={removeSessionEventArr}
               />
             ))}
           </ul>
@@ -148,6 +153,7 @@ function SessionForm({ currentTimelineElement, handleToggleSessionModal }) {
             currentSessionEvent={currentSessionEvent}
             addSessionEvent={addSessionEvent}
             modifySessionEvent={modifySessionEvent}
+            handleToggleModal={handleToggleModal}
           />
         </ModalWindow>
       )}

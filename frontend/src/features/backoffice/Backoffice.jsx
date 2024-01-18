@@ -7,8 +7,26 @@ import Button from "../../ui/Button";
 
 function Backoffice() {
   const { attendeesArr, timelineArr } = useBackofficeContext();
+  const [eventsArr, setEventsArr] = useState([]);
+  const [sessionsArr, setSessionsArr] = useState([]);
 
-  function reformatTimeline(timeline) {}
+  useEffect(() => {
+    const tempeventsArr = [];
+    const tempSessions = [];
+
+    timelineArr.forEach((item) => {
+      if ("attendeeLimit" in item) {
+        tempSessions.push(item);
+      } else {
+        tempeventsArr.push(item);
+      }
+    });
+
+    setEventsArr(tempeventsArr);
+    setSessionsArr(tempSessions);
+  }, [timelineArr, attendeesArr]);
+
+  console.log(eventsArr);
 
   return (
     <>

@@ -105,9 +105,14 @@ public class ConferenceController {
     @GetMapping("/getAllConference")
     public  HashMap<String,Object> getAllConference()
     {
-       return conferenceService.getConference();
+       return conferenceService.getConferenceWithUsers();
     }
 
+    @GetMapping("/getConferenceTimeLine")
+    public  HashMap<String,Object> getConferenceTimeLine()
+    {
+        return conferenceService.getConferenceToUser();
+    }
     @DeleteMapping("/deleteType")
     public ResponseEntity<JsonResponse> deleteType(@RequestParam("type") UUID id) {
 

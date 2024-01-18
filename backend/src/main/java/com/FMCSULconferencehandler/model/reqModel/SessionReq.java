@@ -12,7 +12,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 public class SessionReq {
-    private UUID id;
+    private String id;
     private String name;
     private String building;
     private int attendeeLimit;

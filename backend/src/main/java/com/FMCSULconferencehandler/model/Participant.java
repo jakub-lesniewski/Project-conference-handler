@@ -45,7 +45,6 @@ public Participant( String name, String surname, String email_login, String affi
     this.password = password;
 }
     public Participant( String name, String surname, String email_login, String affilation) {
-
         this.name = name;
         this.surname = surname;
         this.email = email_login;

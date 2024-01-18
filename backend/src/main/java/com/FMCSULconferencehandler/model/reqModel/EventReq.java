@@ -14,6 +14,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class EventReq {
+
+    private String id;
     @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm")
     private LocalDateTime dateStart;
     @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm")

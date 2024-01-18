@@ -241,33 +241,9 @@ public class ConferenceService {
         }
 
     }
-    public  HashMap<String,Object> getConference()
-    {
-        List<SessionReq> sessionReqs = new ArrayList<>();
-        List<Event> eventReqs = eventRepository.findBySessionFkNull();
+    public  HashMap<String,Object> getConferenceWithUsers() {
+        HashMap<String,Object> json=getConferenceToUser();
         List<Participant> participantReqs = participantRepository.findAll();
-        for(Session session:sessionRepository.findAll()) {
-            List<LectureRequest> lectureRequests = new ArrayList<>();
-            for(Event event: eventsInSession(session.getId())) {
-                if(lectureRepository.findByEvent_fk(event.getId())!=null) {
-                    Lecture lecture = lectureRepository.findByEvent_fk(event.getId());
-                    Participant lecturer = lecturerRepository.findByLectureId(lecture.getId()).get(0);
-
-                    lectureRequests.add
-                            (new LectureRequest(event.getId(),event.getTime_start().toLocalTime(), event.getTime_end().toLocalTime(), event.getName(), session.getId(), lecture.getAbstract(), lecturer.getEmail(),"lecture"));
-                } else {
-                    lectureRequests.add
-                            (new LectureRequest(event.getId(),event.getTime_start().toLocalTime(), event.getTime_end().toLocalTime(), event.getName(), session.getId(), null, null,"event"));
-                }
-            }
-            sessionReqs.add(
-                    new SessionReq(session.getId(),session.getName(),
-                            session.getBuilding(),0,session.getCity(),
-                            session.getTime_start(),session.getTime_end(),session.getRoom_number(),
-                            session.getStreet(),lectureRequests.toArray(LectureRequest[]::new)
-                    ));
-        }
-
         List<Map<String, String>> attendeesList = participantReqs.stream()
                 .map(participant -> {
                     Map<String, String> attendeeMap = new HashMap<>();
@@ -279,6 +255,37 @@ public class ConferenceService {
                     return attendeeMap;
                 })
                 .toList();
+        json.put("attendees",attendeesList);
+        return json;
+
+    }
+    public  HashMap<String,Object> getConferenceToUser()
+    {
+        List<SessionReq> sessionReqs = new ArrayList<>();
+        List<Event> eventReqs = eventRepository.findBySessionFkNull();
+        for(Session session:sessionRepository.findAll()) {
+            List<LectureRequest> lectureRequests = new ArrayList<>();
+            for(Event event: eventsInSession(session.getId())) {
+                if(lectureRepository.findByEvent_fk(event.getId())!=null) {
+                    Lecture lecture = lectureRepository.findByEvent_fk(event.getId());
+                    Participant lecturer = lecturerRepository.findByLectureId(lecture.getId()).get(0);
+
+                    lectureRequests.add
+                            (new LectureRequest(event.getId().toString(),event.getTime_start().toLocalTime(), event.getTime_end().toLocalTime(), event.getName(), session.getId(), lecture.getAbstract(), lecturer.getEmail(),"lecture"));
+                } else {
+                    lectureRequests.add
+                            (new LectureRequest(event.getId().toString(),event.getTime_start().toLocalTime(), event.getTime_end().toLocalTime(), event.getName(), session.getId(), null, null,"event"));
+                }
+            }
+            sessionReqs.add(
+                    new SessionReq(session.getId().toString(),session.getName(),
+                            session.getBuilding(),0,session.getCity(),
+                            session.getTime_start(),session.getTime_end(),session.getRoom_number(),
+                            session.getStreet(),lectureRequests.toArray(LectureRequest[]::new)
+                    ));
+        }
+
+
 
         List<Map<String, String>> eventList = eventReqs.stream()
                 .map(event -> {
@@ -292,7 +299,7 @@ public class ConferenceService {
                 .toList();
 
         HashMap<String,Object> json=new HashMap<>();
-        json.put("attendees",attendeesList);
+
         json.put("sessions",sessionReqs);
         json.put("events",eventList);
         return json;

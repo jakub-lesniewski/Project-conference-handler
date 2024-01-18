@@ -6,20 +6,22 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
 @AllArgsConstructor
 public class SessionReq {
+    private UUID id;
     private String name;
     private String building;
-    private int atendeeLimit;
+    private int attendeeLimit;
     private String city;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
-    private LocalDateTime startingDate;
+    private LocalDateTime dateStart;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
-    private LocalDateTime endingDate;
+    private LocalDateTime dateEnd;
     private String room;
     private String street;
-    private LectureRequest[] eventsArr;
+    private LectureRequest[] sessionEventsArr;
 }

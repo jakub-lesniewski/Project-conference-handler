@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -16,24 +17,38 @@ import java.util.UUID;
 @Getter
 @Setter
 public class LectureRequest {
-    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm")
-    private LocalDateTime startingDate;
-    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm")
-    private LocalDateTime endingDate;
+    private UUID id;
+    @JsonFormat(pattern="HH:mm")
+    private LocalTime timeStart;
+    @JsonFormat(pattern="HH:mm")
+    private LocalTime timeEnd;
     private String name;
     private String _abstract;
     private UUID session_fk;
+    private String type;
 //    private String topic;
 
-    List<String> lecturers = new LinkedList<>();
+    private String lecturers;
+    //List<String> leadEmail = new LinkedList<>();
 
-    public LectureRequest(LocalDateTime time_start, LocalDateTime time_end, String name, UUID session_fk, String Abstract,String... speakers) {
-        this.startingDate = time_start;
-        this.endingDate = time_end;
+    public LectureRequest(LocalTime time_start, LocalTime time_end, String name, UUID session_fk, String Abstract,String speakers) {
+        this.timeStart = time_start;
+        this.timeEnd = time_end;
         this.name = name;
         this.session_fk = session_fk;
         this._abstract = Abstract;
-        this.lecturers=List.of(speakers);
+        this.lecturers=speakers;
+    }
+
+    public LectureRequest(UUID id,LocalTime time_start, LocalTime time_end, String name, UUID session_fk, String Abstract,String speakers,String type) {
+        this.id = id;
+        this.timeStart = time_start;
+        this.timeEnd = time_end;
+        this.name = name;
+        this.session_fk = session_fk;
+        this._abstract = Abstract;
+        this.lecturers=speakers;
+        this.type = type;
     }
 }
 

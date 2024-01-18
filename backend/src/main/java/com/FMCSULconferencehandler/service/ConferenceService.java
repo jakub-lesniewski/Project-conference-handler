@@ -2,9 +2,12 @@ package com.FMCSULconferencehandler.service;
 
 
 import com.FMCSULconferencehandler.model.*;
+import com.FMCSULconferencehandler.model.reqModel.EventReq;
 import com.FMCSULconferencehandler.model.reqModel.LectureRequest;
+import com.FMCSULconferencehandler.model.reqModel.ParticipantReq;
 import com.FMCSULconferencehandler.model.reqModel.SessionReq;
 import com.FMCSULconferencehandler.repositories.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -12,7 +15,10 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.FMCSULconferencehandler.controller.sha.Hashes.hashSHA512;
 
@@ -44,8 +50,9 @@ public class ConferenceService {
     }
 
     @Transactional
-    public void addAllConference(Participant[] participants, SessionReq[] sessionReqs, Event[] eventsArr)
+    public void addAllConference(ParticipantReq[] participantsReq, SessionReq[] sessionReqs, EventReq[] eventsReq)
     {
+        Participant[] participants =  Arrays.stream(participantsReq).map(ParticipantReq::getAttendees).toArray(Participant[]::new);
         for(Participant participant:participants) {
             if (adminService.checkMail(participant.getEmail())) {
                 if(participantRepository.existsByEmail(participant.getEmail())) {
@@ -57,13 +64,16 @@ public class ConferenceService {
             }
         }
         for(SessionReq session: sessionReqs) {
-            Session newSession = new Session(session.getName(), session.getStartingDate(),
-                    session.getEndingDate(), session.getCity(),
+            Session newSession = new Session(session.getName(), session.getDateStart(),
+                    session.getDateEnd(), session.getCity(),
                     session.getStreet(), session.getBuilding(),
                     session.getRoom());
             sessionRepository.save(newSession);
-            for(LectureRequest lecture: session.getEventsArr()) {
-                Event event = new Event(lecture.getStartingDate(),lecture.getEndingDate()
+            for(LectureRequest lecture: session.getSessionEventsArr()) {
+                LocalDateTime dateStart = LocalDateTime.of(session.getDateStart().toLocalDate(),lecture.getTimeStart());
+                LocalDateTime dateEnd = LocalDateTime.of(session.getDateStart().toLocalDate(),lecture.getTimeEnd());
+
+                Event event = new Event(dateStart,dateEnd
                         ,lecture.getName(),newSession.getId());
 
                 if(!checkEvent(event)) {
@@ -72,26 +82,39 @@ public class ConferenceService {
 
                 eventRepository.save(event);
 
-                if(!lecture.getLecturers().isEmpty()) {
+                if(lecture.getLecturers()!=null)
+                {
                     Lecture lecture1 = new Lecture(lecture.getName(), lecture.get_abstract(), event);
-                    List<String> emailSpeakers = lecture.getLecturers();
-                    for (String email : emailSpeakers) {
-                        if (participantRepository.findParticipantByEmail(email).isEmpty()){
-                            throw new DataIntegrityViolationException("Account with email: " + email + "not found");
-                        }
+                    if (participantRepository.findParticipantByEmail(lecture.getLecturers()).isEmpty()){
+                            throw new DataIntegrityViolationException("Account with email: " + lecture.getLecturers() + "not found");
                     }
                     lectureRepository.save(lecture1);
-                    for (String email : emailSpeakers) {
-                        addSpeakerToLecture(lecture1.getId(),
-                                participantRepository.findParticipantByEmail(email)
-                                .orElseThrow(()->new EmptyResultDataAccessException("Account with email: " + email + "not found",1))
+                    addSpeakerToLecture(lecture1.getId(),
+                                participantRepository.findParticipantByEmail(lecture.getLecturers())
+                                .orElseThrow(()->new EmptyResultDataAccessException("Account with email: " + lecture.getLecturers() + "not found",1))
                                 .getId());
-                    }
                 }
+//                if(!lecture.get().isEmpty()) {
+//                    Lecture lecture1 = new Lecture(lecture.getName(), lecture.get_abstract(), event);
+//                    List<String> emailSpeakers = lecture.getLecturers();
+//                    for (String email : emailSpeakers) {
+//                        if (participantRepository.findParticipantByEmail(email).isEmpty()){
+//                            throw new DataIntegrityViolationException("Account with email: " + email + "not found");
+//                        }
+//                    }
+//                    lectureRepository.save(lecture1);
+//                    for (String email : emailSpeakers) {
+//                        addSpeakerToLecture(lecture1.getId(),
+//                                participantRepository.findParticipantByEmail(email)
+//                                .orElseThrow(()->new EmptyResultDataAccessException("Account with email: " + email + "not found",1))
+//                                .getId());
+//                    }
+//                }
             }
         }
-        if(eventsArr!=null) {
-            eventRepository.saveAll(Arrays.asList(eventsArr));
+        if(eventsReq!=null) {
+            Event[] events= Arrays.stream(eventsReq).map(EventReq::getEvent).toArray(Event[]::new);
+            eventRepository.saveAll(Arrays.asList(events));
         }
     }
 
@@ -220,24 +243,58 @@ public class ConferenceService {
     }
     public  HashMap<String,Object> getConference()
     {
+        List<SessionReq> sessionReqs = new ArrayList<>();
+        List<Event> eventReqs = eventRepository.findBySessionFkNull();
+        List<Participant> participantReqs = participantRepository.findAll();
+        for(Session session:sessionRepository.findAll()) {
+            List<LectureRequest> lectureRequests = new ArrayList<>();
+            for(Event event: eventsInSession(session.getId())) {
+                if(lectureRepository.findByEvent_fk(event.getId())!=null) {
+                    Lecture lecture = lectureRepository.findByEvent_fk(event.getId());
+                    Participant lecturer = lecturerRepository.findByLectureId(lecture.getId()).get(0);
 
-        HashMap<String, Object> json = new HashMap<>();
-        json.put("CONFERENCE",conferenceRepository.findAll());
-
-        for (Session session : sessionRepository.findAll()) {
-            json.put("SESSION", session);
-            List<Event> events = new ArrayList<>();
-            List<Map<String, Object>> lecturesData = new ArrayList<>();
-
-            for (Event e : eventRepository.findBySessionFk(session.getId())) {
-                for (Lecture l : lectureRepository.findByEvent_fk(e.getId())) {
-                    lecturesData.add(getJsonLecture(l.getId()));
+                    lectureRequests.add
+                            (new LectureRequest(event.getId(),event.getTime_start().toLocalTime(), event.getTime_end().toLocalTime(), event.getName(), session.getId(), lecture.getAbstract(), lecturer.getEmail(),"lecture"));
+                } else {
+                    lectureRequests.add
+                            (new LectureRequest(event.getId(),event.getTime_start().toLocalTime(), event.getTime_end().toLocalTime(), event.getName(), session.getId(), null, null,"event"));
                 }
-                events.add(e);
             }
-            json.put("EVENT", events);
-            json.put("LECTURE", lecturesData);
+            sessionReqs.add(
+                    new SessionReq(session.getId(),session.getName(),
+                            session.getBuilding(),0,session.getCity(),
+                            session.getTime_start(),session.getTime_end(),session.getRoom_number(),
+                            session.getStreet(),lectureRequests.toArray(LectureRequest[]::new)
+                    ));
         }
+
+        List<Map<String, String>> attendeesList = participantReqs.stream()
+                .map(participant -> {
+                    Map<String, String> attendeeMap = new HashMap<>();
+                    attendeeMap.put("id", participant.getId().toString());
+                    attendeeMap.put("name", participant.getName());
+                    attendeeMap.put("surname", participant.getSurname());
+                    attendeeMap.put("email", participant.getEmail());
+                    attendeeMap.put("affiliation",participant.getAffiliation());
+                    return attendeeMap;
+                })
+                .toList();
+
+        List<Map<String, String>> eventList = eventReqs.stream()
+                .map(event -> {
+                    Map<String, String> attendeeMap = new HashMap<>();
+                    attendeeMap.put("id", event.getId().toString());
+                    attendeeMap.put("name", event.getName());
+                    attendeeMap.put("dateStart", event.getTime_start().toString());
+                    attendeeMap.put("dateEnd",  event.getTime_end().toString());
+                    return attendeeMap;
+                })
+                .toList();
+
+        HashMap<String,Object> json=new HashMap<>();
+        json.put("attendees",attendeesList);
+        json.put("sessions",sessionReqs);
+        json.put("events",eventList);
         return json;
     }
 
@@ -460,6 +517,21 @@ public class ConferenceService {
         }
     }
 
+    public void deleteAllConference () {
+        conferenceRepository.deleteAll();
+        lecturerRepository.deleteAll();
+        attendeeRepository.deleteAll();
+        lectureRepository.deleteAll();
+        eventRepository.deleteAll();
+        sessionRepository.deleteAll();
+        for(Participant participant:participantRepository.findAll())
+        {
+            if(! participant.getId().toString().equals("91f837e3-ae82-4b41-8d21-b2a4415fa36f")){
+                participantRepository.delete(participant);
+            }
+        }
+    }
+
     @Transactional
     public void deleteSession(UUID id) {
 
@@ -527,6 +599,7 @@ public class ConferenceService {
 
         conferenceRepository.deleteById(id);
     }
+
 
     public void updateSession(Session session){
         Session updateSession = sessionRepository.findById(session.getId())

@@ -13,8 +13,8 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 public class ConferenceRequest {
-    private Participant[] atendeesArr;
-    private SessionReq[] sessionsArr;
-    private Event[] eventsArr;
+    private ParticipantReq[] attendees;
+    private SessionReq[] sessions;
+    private EventReq[] events;
 }
 

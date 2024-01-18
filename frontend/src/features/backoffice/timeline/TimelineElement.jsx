@@ -23,8 +23,8 @@ function TimelineElement({ timelineElement, handleSetCurrentTimelineElement }) {
       <td className="p-4">{attendeeLimit || "---"}</td>
       <td className="p-4">{building || "---"}</td>
       <td className="p-4">{street || "---"}</td>
-      <td className="p-4">{dateStart}</td>
-      <td className="p-4">{dateEnd}</td>
+      <td className="p-4">{dateStart.replace("T", " ")}</td>
+      <td className="p-4">{dateEnd.replace("T", " ")}</td>
       <td
         onClick={(e) => {
           e.stopPropagation();

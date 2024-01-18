@@ -47,13 +47,17 @@ function SessionForm({ currentTimelineElement, handleToggleSessionModal }) {
 
   function onSubmit(data) {
     if (currentTimelineElement) {
-      modifyTimelineElement(currentTimelineElement.id, data);
+      modifyTimelineElement(currentTimelineElement.id, {
+        ...data,
+        sessionEventsArr,
+      });
     } else {
       const newSession = {
         id: uuidv4(),
         name: data.name,
         room: data.room,
         attendeeLimit: data.attendeeLimit,
+        sessionEventsArr: sessionEventsArr,
         building: data.building,
         street: data.street,
         dateStart: data.dateStart,

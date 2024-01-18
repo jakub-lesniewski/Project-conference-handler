@@ -23,8 +23,15 @@ function AttendeesBox() {
   }
 
   return (
-    <section className="m-4">
-      <div className="relative overflow-x-auto rounded-lg shadow-md">
+    <section className="m-4 rounded-lg border-4 p-2">
+      <button
+        className="mb-2 ml-1 mt-3 inline-flex rounded-md border border-fmcsGreen bg-fmcsGreen p-2 text-fmcsWhite transition-all duration-200 hover:bg-fmcsWhite hover:text-fmcsGreen"
+        onClick={handleToggleModal}
+      >
+        add attendee
+      </button>
+
+      <div className="relative mb-2 overflow-x-auto rounded-lg shadow-md">
         <table className="w-full border-4 border-opacity-70 text-left text-sm text-fmcsBlack rtl:text-right">
           <TableHead type="attendees" />
           <tbody>
@@ -38,13 +45,6 @@ function AttendeesBox() {
           </tbody>
         </table>
       </div>
-
-      <button
-        className="ml-1 mt-3 inline-flex rounded-md border border-fmcsGreen bg-fmcsGreen p-2 text-fmcsWhite transition-all duration-200 hover:bg-fmcsWhite hover:text-fmcsGreen"
-        onClick={handleToggleModal}
-      >
-        add attendee
-      </button>
 
       {toggleModal && (
         <ModalWindow onClose={handleToggleModal}>

@@ -52,7 +52,6 @@ export function BackofficeProvider({ children }) {
           name: "Question break",
           timeStart: "01:45",
           timeEnd: "01:55",
-          leadEmail: "kowal@example.com",
         },
       ],
     },

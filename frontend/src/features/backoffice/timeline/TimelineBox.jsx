@@ -37,8 +37,23 @@ function TimelineBox() {
   }
 
   return (
-    <section className="m-4">
-      <div className="relative overflow-x-auto rounded-lg shadow-md">
+    <section className="m-4 rounded-lg border-4 p-2 shadow-md">
+      <div className="flex gap-2 pb-2">
+        <button
+          onClick={handleToggleSessionModal}
+          className="ml-1 mt-3 inline-flex rounded-md border border-fmcsGreen bg-fmcsGreen p-2 text-fmcsWhite transition-all duration-200 hover:bg-fmcsWhite hover:text-fmcsGreen"
+        >
+          add session
+        </button>
+        <button
+          onClick={handleToggleEventModal}
+          className="ml-1 mt-3 inline-flex rounded-md border border-fmcsGreen bg-fmcsGreen p-2 text-fmcsWhite transition-all duration-200 hover:bg-fmcsWhite hover:text-fmcsGreen"
+        >
+          add event
+        </button>
+      </div>
+
+      <div className="relative mb-2 overflow-x-auto rounded-lg shadow-md">
         <table className="w-full border-4 border-opacity-70 text-left text-sm text-fmcsBlack rtl:text-right">
           <TableHead />
           <tbody>
@@ -53,21 +68,6 @@ function TimelineBox() {
             ))}
           </tbody>
         </table>
-      </div>
-
-      <div className="flex gap-2">
-        <button
-          onClick={handleToggleSessionModal}
-          className="ml-1 mt-3 inline-flex rounded-md border border-fmcsGreen bg-fmcsGreen p-2 text-fmcsWhite transition-all duration-200 hover:bg-fmcsWhite hover:text-fmcsGreen"
-        >
-          add session
-        </button>
-        <button
-          onClick={handleToggleEventModal}
-          className="ml-1 mt-3 inline-flex rounded-md border border-fmcsGreen bg-fmcsGreen p-2 text-fmcsWhite transition-all duration-200 hover:bg-fmcsWhite hover:text-fmcsGreen"
-        >
-          add event
-        </button>
       </div>
 
       {toggleSessionModal && (

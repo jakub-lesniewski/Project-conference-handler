@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import AttendeesBox from "./attendee/AttendeesBox";
 import TimelineBox from "./timeline/TimelineBox";
 import { useBackofficeContext } from "./BackofficeContext";

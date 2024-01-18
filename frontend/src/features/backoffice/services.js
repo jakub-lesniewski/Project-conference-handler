@@ -2,6 +2,10 @@ import axios from "axios";
 // import CircularJSON from "circular-json";
 
 export function createConference(attendeesArr, eventsArr, sessionsArr) {
+  console.log("attendees:", attendeesArr);
+  console.log("events:", eventsArr);
+  console.log("sessions:", sessionsArr);
+
   let config = {
     method: "post",
     maxBodyLength: Infinity,

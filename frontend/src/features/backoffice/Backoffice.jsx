@@ -7,32 +7,14 @@ import Button from "../../ui/Button";
 
 function Backoffice() {
   const { attendeesArr, timelineArr } = useBackofficeContext();
-  const [eventsArr, setEventsArr] = useState([]);
-  const [sessionsArr, setSessionsArr] = useState([]);
 
-  useEffect(() => {
-    const tempeventsArr = [];
-    const tempSessions = [];
-
-    timelineArr.forEach((item) => {
-      if ("attendeeLimit" in item) {
-        tempSessions.push(item);
-      } else {
-        tempeventsArr.push(item);
-      }
-    });
-
-    setEventsArr(tempeventsArr);
-    setSessionsArr(tempSessions);
-  }, [timelineArr, attendeesArr]);
-
-  console.log(eventsArr);
+  function reformatTimeline(timeline) {}
 
   return (
     <>
       <div className="mx-24 mt-5 flex gap-5 rounded-lg border-4 p-3">
         <Button
-          onClick={() => createConference(attendeesArr, sessionsArr, eventsArr)}
+          onClick={() => createConference(attendeesArr, eventsArr, sessionsArr)}
           style="alt"
         >
           create conference

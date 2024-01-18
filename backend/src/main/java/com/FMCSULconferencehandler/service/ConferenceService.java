@@ -82,16 +82,16 @@ public class ConferenceService {
 
                 eventRepository.save(event);
 
-                if(lecture.getLecturers()!=null)
+                if(lecture.getHeadLead()!=null)
                 {
                     Lecture lecture1 = new Lecture(lecture.getName(), lecture.get_abstract(), event);
-                    if (participantRepository.findParticipantByEmail(lecture.getLecturers()).isEmpty()){
-                            throw new DataIntegrityViolationException("Account with email: " + lecture.getLecturers() + "not found");
+                    if (participantRepository.findParticipantByEmail(lecture.getHeadLead()).isEmpty()){
+                            throw new DataIntegrityViolationException("Account with email: " + lecture.getHeadLead() + "not found");
                     }
                     lectureRepository.save(lecture1);
                     addSpeakerToLecture(lecture1.getId(),
-                                participantRepository.findParticipantByEmail(lecture.getLecturers())
-                                .orElseThrow(()->new EmptyResultDataAccessException("Account with email: " + lecture.getLecturers() + "not found",1))
+                                participantRepository.findParticipantByEmail(lecture.getHeadLead())
+                                .orElseThrow(()->new EmptyResultDataAccessException("Account with email: " + lecture.getHeadLead() + "not found",1))
                                 .getId());
                 }
 //                if(!lecture.get().isEmpty()) {

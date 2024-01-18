@@ -28,7 +28,7 @@ public class LectureRequest {
     private String type;
 //    private String topic;
 
-    private String lecturers;
+    private String headLead;
     //List<String> leadEmail = new LinkedList<>();
 
     public LectureRequest(LocalTime time_start, LocalTime time_end, String name, UUID session_fk, String Abstract,String speakers) {
@@ -37,7 +37,7 @@ public class LectureRequest {
         this.name = name;
         this.session_fk = session_fk;
         this._abstract = Abstract;
-        this.lecturers=speakers;
+        this.headLead=speakers;
     }
 
     public LectureRequest(String id,LocalTime time_start, LocalTime time_end, String name, UUID session_fk, String Abstract,String speakers,String type) {
@@ -47,7 +47,7 @@ public class LectureRequest {
         this.name = name;
         this.session_fk = session_fk;
         this._abstract = Abstract;
-        this.lecturers=speakers;
+        this.headLead=speakers;
         this.type = type;
     }
 }

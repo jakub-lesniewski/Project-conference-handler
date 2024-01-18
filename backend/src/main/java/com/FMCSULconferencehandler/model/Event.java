@@ -48,6 +48,11 @@ public class Event {
         this.time_end = time_end;
         this.name = name;
         this.amount_of_participants = 0;
+    }
+    public Event( LocalDateTime time_start, LocalDateTime time_end, String name ){
+        this.time_start = time_start;
+        this.time_end = time_end;
+        this.name = name;
 
     }
     public Event( LocalDateTime time_start, LocalDateTime time_end, String name,UUID session ){

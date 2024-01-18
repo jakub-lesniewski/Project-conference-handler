@@ -40,11 +40,10 @@ export function BackofficeProvider({ children }) {
           id: "321",
           type: "lecture",
           headLead: "kowalski@gmail.com",
-          abstract: "abstract.pdf",
+          _abstract: "abstract.pdf",
           name: "Kapłony i Szczerzuje",
           timeStart: "01:45",
           timeEnd: "01:55",
-          lecturers: "kowal@example.com",
         },
         {
           id: "654",

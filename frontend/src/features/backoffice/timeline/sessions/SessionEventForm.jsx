@@ -13,7 +13,7 @@ function SessionEventForm({
 }) {
   const { register, handleSubmit, watch } = useForm({
     defaultValues: {
-      type: currentSessionEvent?.abstract ? "lecture" : "event",
+      type: currentSessionEvent?._abstract ? "lecture" : "event",
     },
   });
   const { attendeesArr } = useBackofficeContext();
@@ -31,7 +31,7 @@ function SessionEventForm({
       };
 
       if (data.type === "lecture") {
-        newEvent.abstract = data.abstract;
+        newEvent._abstract = data._abstract;
         newEvent.headLead = data.headLead;
       }
       addSessionEvent(newEvent);
@@ -64,8 +64,8 @@ function SessionEventForm({
         <>
           <InputField
             label="abstract:"
-            name="abstract"
-            defaultValue={currentSessionEvent?.abstract}
+            name="_abstract"
+            defaultValue={currentSessionEvent?._abstract}
             register={register}
             placeholder="abstract.pdf"
             autoFocus={false}

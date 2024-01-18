@@ -1,5 +1,6 @@
 package com.FMCSULconferencehandler.model;
 
+import com.FMCSULconferencehandler.model.reqModel.ParticipantReq;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -43,6 +44,13 @@ public Participant( String name, String surname, String email_login, String affi
     this.affiliation = affilation;
     this.password = password;
 }
+    public Participant( String name, String surname, String email_login, String affilation) {
+
+        this.name = name;
+        this.surname = surname;
+        this.email = email_login;
+        this.affiliation = affilation;
+    }
     public UUID getId() {
         return id;
     }
@@ -85,4 +93,5 @@ public Participant( String name, String surname, String email_login, String affi
     public void setPassword(String password) {
         this.password = password;
     }
+
 }

@@ -23,9 +23,15 @@ public class ConferenceController {
 
     @PostMapping("/addAllConference")
     public ResponseEntity<JsonResponse> addAllConference(@RequestBody ConferenceRequest request) {
-        conferenceService.addAllConference(request.getAtendeesArr(),request.getSessionsArr(),request.getEventsArr());
+        conferenceService.addAllConference(request.getAttendees(),request.getSessions(),request.getEvents());
         return createSuccessJsonResponse("conference created");
 
+    }
+    @DeleteMapping("/deleteAllConference")
+    public ResponseEntity<JsonResponse> deleteAllConference() {
+
+        conferenceService.deleteAllConference();
+        return createSuccessJsonResponse("Conference deleted");
     }
     @PostMapping("/addConference")
     public ResponseEntity<Object> addConference(@RequestBody Conference conference)

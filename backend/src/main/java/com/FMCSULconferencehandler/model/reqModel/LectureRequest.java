@@ -17,7 +17,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class LectureRequest {
-    private UUID id;
+    private String id;
     @JsonFormat(pattern="HH:mm")
     private LocalTime timeStart;
     @JsonFormat(pattern="HH:mm")
@@ -40,7 +40,7 @@ public class LectureRequest {
         this.lecturers=speakers;
     }
 
-    public LectureRequest(UUID id,LocalTime time_start, LocalTime time_end, String name, UUID session_fk, String Abstract,String speakers,String type) {
+    public LectureRequest(String id,LocalTime time_start, LocalTime time_end, String name, UUID session_fk, String Abstract,String speakers,String type) {
         this.id = id;
         this.timeStart = time_start;
         this.timeEnd = time_end;
